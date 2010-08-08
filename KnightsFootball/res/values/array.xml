@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<array name="listArray">
+	<item>Knights Athletics</item>
+	<item>UCF Sports</item>
+	<item>UCF Pride</item>
+	<item>O\'Leary Blogs</item>
+	<item>Student Paper</item>
+</array>
+<array name="listValues">
+	<item>http://ucfathletics.cstv.com/sports/m-footbl/headline-rss.xml</item>
+	<item>http://ucf.rivals.com/rss2feed.asp?SID=908</item>
+	<item>http://feeds2.feedburner.com/sports/college/goldenknightsnotepad</item>
+	<item>http://olearypsiphi.com/RSS/rss.php</item>
+	<item>http://www.centralfloridafuture.com/se/central-florida-future-rss-1.991045</item>
+</array>
+</resources>

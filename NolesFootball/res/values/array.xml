@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<array name="listNames">
+	<item>Noles Athletics</item>
+	<item>Warchant</item>
+	<item>Noles Digest</item>
+	<item>Tomahawk Nation</item>
+</array>
+<array name="listValues">
+	<item>http://www.seminoles.com/sports/m-footbl/headline-rss.xml</item>
+	<item>http://floridastate.rivals.com/rss2feed.asp?SID=1061</item>
+	<item>http://rss.scout.com/rss.aspx?sid=16</item>
+	<item>http://feeds.feedburner.com/sportsblogs/tomahawknation.xml</item>
+</array>
+</resources>

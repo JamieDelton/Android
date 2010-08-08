@@ -1,0 +1,11 @@
+<resources>
+	<string name="OK">OK</string>
+	<string name="CannotShowContent">Can\'t Show Content</string>
+	<string name="Instapaper">Instapaper</string>
+	<string name="Instapaper_enabled_title">Instapaper Enabled</string>
+	<string name="Instapaper_enabled_summary">Disable or Enable Instapaper access</string>
+	<string name="Instapaper_username_title">Username</string>
+	<string name="Instapaper_username_summary">your Instapaper username</string>
+	<string name="Instapaper_password_title">Password</string>
+	<string name="Instapaper_password_summary">your instapaper password</string>
+</resources>

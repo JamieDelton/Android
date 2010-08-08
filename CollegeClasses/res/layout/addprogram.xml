@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical">
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		
+		<include android:id="@+id/nametext" layout="@layout/add_textview" />
+		<include android:id="@+id/nameedit" android:layout_width="200dp" layout="@layout/add_edittext" />
+	</LinearLayout>
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		
+		<include android:id="@+id/codetext" android:layout_below="@id/nameedit" layout="@layout/add_textview" />
+		<include android:id="@+id/codeedit" android:layout_width="134dp" layout="@layout/add_edittext" />
+	</LinearLayout>
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		
+		<include android:id="@+id/credittext" android:layout_below="@id/codeedit" layout="@layout/add_textview" />
+		<include android:id="@+id/creditedit" android:layout_width="134dp" layout="@layout/add_edittext" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		
+		<Button android:id="@+id/saveButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Save" />
+			
+		<Button android:id="@+id/cancelButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/codeedit"
+			android:text="Cancel" />
+	</LinearLayout>
+</LinearLayout>
