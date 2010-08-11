@@ -13,68 +13,79 @@
 // limitations under the License.
 package com.itnoles.knightfootball;
 
-import com.itnoles.shared.InstapaperRequest;
+import com.itnoles.shared.EditTextListener;
 
-import android.content.*;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.*;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.widget.TextView;
 
-public class SettingsActivity extends PreferenceActivity {
-	private SharedPreferences settings;
-	private InstapaperRequest request;
+public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+	private static final String NEWS = "news";
+	private static final String ENABLED = "instapaper_enabled";
+
+	private ListPreference mNewsPref;
+	private CheckBoxPreference mInstapaperEnabledPref;
+	private EditTextPreference usernameEditPref;
+	private EditTextPreference passwordEditPref;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		settings = getSharedPreferences("KnightsSetting", MODE_PRIVATE);
-		request = new InstapaperRequest(settings);
-		
+		getPreferenceManager().setSharedPreferencesName("KnightsSetting");
+
 		setPreferenceScreen(createPreferenceHierarchy());
 		
+		// The setDependency call must be made after the setPreferencesScreen() call
+		usernameEditPref.setDependency(ENABLED);
+		passwordEditPref.setDependency(ENABLED);
+		
+		// Set up a listener whenever a key changes            
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
 		TextView mCopyright = new TextView(this);
 		mCopyright.setText("Written by Jonathan Steele\nEmail: xfsunoles@gmail.com");
 		mCopyright.setGravity(Gravity.CENTER);
 		getListView().addFooterView(mCopyright);
 	}
 	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Unregister the listener whenever a key changes
+		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);    
+	}
+	
 	private PreferenceScreen createPreferenceHierarchy() {
 		 // Root
 		PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
 	
-		final ListPreference mNewsPref = new ListPreference(this);
-		mNewsPref.setEntries(R.array.listArray);
+		mNewsPref = new ListPreference(this);
+		mNewsPref.setEntries(R.array.listNames);
 		mNewsPref.setEntryValues(R.array.listValues);
 		mNewsPref.setDialogTitle(R.string.listPref_dialogTitle);
-		mNewsPref.setKey("news");
+		mNewsPref.setKey(NEWS);
 		mNewsPref.setTitle(R.string.listPref_title);
 		mNewsPref.setSummary(R.string.listPref_summary);
-		mNewsPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-			public boolean onPreferenceChange(final Preference preference, final Object newValue) {
-				SharedPreferences.Editor editor = settings.edit();
-				int index = mNewsPref.findIndexOfValue(newValue.toString());
-				if (index != -1) {
-					editor.putString("newstitle", mNewsPref.getEntries()[index].toString());
-					editor.putString("newsurl", mNewsPref.getEntryValues()[index].toString());
-				}
-				// Don't forget to commit your edits!!!
-				editor.commit();
-				return true;
-			}
-		});
 		root.addPreference(mNewsPref);
 		
+		mInstapaperEnabledPref = new CheckBoxPreference(this);
+		mInstapaperEnabledPref.setKey(ENABLED);
+		mInstapaperEnabledPref.setTitle(R.string.Instapaper_enabled_title);
+		mInstapaperEnabledPref.setSummary(R.string.Instapaper_enabled_summary);
+		root.addPreference(mInstapaperEnabledPref);
+
 		PreferenceCategory instapaperPrefCat = new PreferenceCategory(this);
 		instapaperPrefCat.setTitle(R.string.Instapaper);
 		root.addPreference(instapaperPrefCat);
 
 		// Edit text preference
-		EditTextPreference usernameEditPref = new EditTextListener(this);
+		usernameEditPref = new EditTextListener(this);
 		usernameEditPref.setDialogTitle(R.string.Instapaper_username_title);
 		usernameEditPref.setKey("instapaper_username");
 		usernameEditPref.setTitle(R.string.Instapaper_username_title);
@@ -82,7 +93,7 @@ public class SettingsActivity extends PreferenceActivity {
 		usernameEditPref.getEditText().setSingleLine();
 		instapaperPrefCat.addPreference(usernameEditPref);
 		
-		EditTextPreference passwordEditPref = new EditTextListener(this);
+		passwordEditPref = new EditTextListener(this);
 		passwordEditPref.setDialogTitle(R.string.Instapaper_password_title);
 		passwordEditPref.setKey("instapaper_password");
 		passwordEditPref.setTitle(R.string.Instapaper_password_title);
@@ -95,23 +106,21 @@ public class SettingsActivity extends PreferenceActivity {
 		return root;
 	}
 	
-	private class EditTextListener extends EditTextPreference
-	{
-		public EditTextListener(Context context){
-			super(context);
-		}
-		
-		@Override
-		// When the dialog is closed, perform the relevant actions
-		protected void onDialogClosed(boolean positiveResult) {
-			if (positiveResult) {
-				SharedPreferences.Editor editor = settings.edit();
-				editor.putString(getKey(), getEditText().getText().toString());
-				editor.commit();
-				if (getKey().equals("instapaper_password")) {
-					request.loadDataFromURLForcingBasicAuth("https://www.instapaper.com/api/authenticate", SettingsActivity.this);
-				}
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		if (key.equals(NEWS)) {
+			int index = mNewsPref.findIndexOfValue(mNewsPref.getValue());
+			if (index != -1) {
+				editor.putString("newstitle", mNewsPref.getEntries()[index].toString());
+				editor.putString("newsurl", mNewsPref.getEntryValues()[index].toString());
 			}
 		}
+		
+		if (key.equals(ENABLED)) {
+			editor.putBoolean(ENABLED, mInstapaperEnabledPref.isChecked());
+		}
+		// Don't forget to commit your edits!!!
+		editor.commit();
 	}
 }

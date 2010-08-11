@@ -16,6 +16,8 @@ package com.itnoles.nolesfootball;
 import java.util.*;
 import org.json.*;
 
+import com.itnoles.shared.JSONHelper;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.*;
@@ -27,7 +29,7 @@ public class ScheduleActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 			if (json != null) {
-				List<HashMap<String, String>> staffEntries = new ArrayList<HashMap<String, String>>();
+				List<HashMap<String, String>> entries = new ArrayList<HashMap<String, String>>();
 				try {
 					JSONArray lineItems = (JSONArray)json.get("schedule");
 					for (int i = 0; i < lineItems.length(); ++i) {
@@ -36,9 +38,9 @@ public class ScheduleActivity extends ListActivity {
 						map.put("date", rec.getString("date") + "     " + rec.getString("time"));
 						map.put("school", rec.getString("school"));
 						map.put("tv", rec.getString("tv"));
-						staffEntries.add(map);
+						entries.add(map);
 					}
-					setListAdapter(new ColorAdapter(staffEntries));
+					setListAdapter(new ColorAdapter(entries));
 				} catch (JSONException e) {
 					throw new RuntimeException(e);
 				}

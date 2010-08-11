@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<array name="listArray">
+<array name="listNames">
 	<item>Knights Athletics</item>
 	<item>UCF Sports</item>
 	<item>UCF Pride</item>

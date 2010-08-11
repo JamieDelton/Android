@@ -42,19 +42,20 @@ public final class R {
     public static final class string {
         public static final int CannotShowContent=0x7f040001;
         public static final int Instapaper=0x7f040002;
-        public static final int Instapaper_enabled_summary=0x7f040004;
-        public static final int Instapaper_enabled_title=0x7f040003;
-        public static final int Instapaper_password_summary=0x7f040008;
-        public static final int Instapaper_password_title=0x7f040007;
-        public static final int Instapaper_username_summary=0x7f040006;
-        public static final int Instapaper_username_title=0x7f040005;
-        public static final int InternetNotFound=0x7f04000d;
+        public static final int Instapaper_enabled_summary=0x7f040005;
+        public static final int Instapaper_enabled_title=0x7f040004;
+        public static final int Instapaper_password_summary=0x7f040009;
+        public static final int Instapaper_password_title=0x7f040008;
+        public static final int Instapaper_result=0x7f040003;
+        public static final int Instapaper_username_summary=0x7f040007;
+        public static final int Instapaper_username_title=0x7f040006;
+        public static final int InternetNotFound=0x7f04000e;
         public static final int OK=0x7f040000;
-        public static final int Stadium=0x7f04000e;
-        public static final int app_name=0x7f040009;
-        public static final int listPref_dialogTitle=0x7f04000c;
-        public static final int listPref_summary=0x7f04000b;
-        public static final int listPref_title=0x7f04000a;
+        public static final int Stadium=0x7f04000f;
+        public static final int app_name=0x7f04000a;
+        public static final int listPref_dialogTitle=0x7f04000d;
+        public static final int listPref_summary=0x7f04000c;
+        public static final int listPref_title=0x7f04000b;
     }
     public static final class style {
         public static final int Theme_NoBackground=0x7f050000;

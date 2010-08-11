@@ -16,6 +16,8 @@ package com.itnoles.knightfootball;
 import java.util.*;
 import org.json.*;
 
+import com.itnoles.shared.JSONHelper;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.*;
@@ -60,12 +62,14 @@ public class ScheduleActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_main);
 		final Button stadiumButton = (Button)this.findViewById(R.id.stadiumButton);
-		stadiumButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				// Perform action on click
-				startActivity(new Intent(ScheduleActivity.this, StadiumActivity.class));
-			}
-		});
+		if (stadiumButton != null) {
+			stadiumButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					// Perform action on click
+					startActivity(new Intent(ScheduleActivity.this, StadiumActivity.class));
+				}
+			});
+		}
 		new ScheduleLoadingTask().execute();
 	}
 

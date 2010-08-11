@@ -16,6 +16,8 @@ package com.itnoles.knightfootball;
 import java.util.*;
 import org.json.*;
 
+import com.itnoles.shared.JSONHelper;
+
 import android.app.ListActivity;
 import android.os.*;
 import android.widget.SimpleAdapter;

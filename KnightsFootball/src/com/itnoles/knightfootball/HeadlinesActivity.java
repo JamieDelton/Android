@@ -24,7 +24,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
 public class HeadlinesActivity extends ListActivity {
-	private InstapaperRequest request;
+	private SharedPreferences mPrefs;
 	
 	/*@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -37,23 +37,25 @@ public class HeadlinesActivity extends ListActivity {
 	{
 		super.onResume();
 		
-		Utilities.NetworkCheck(this);
-		SharedPreferences prefs = getSharedPreferences("KnightsSetting", MODE_PRIVATE);
-		request = new InstapaperRequest(prefs);
-		ListView listview = getListView();
-		new FeedLoadingTask(this, listview,
-		prefs.getString("newsurl", "http://ucfathletics.cstv.com/sports/m-footbl/headline-rss.xml"),
-		prefs.getString("newstitle", "Knights Athletics")).execute();
-		registerForContextMenu(listview);
+		// Check to see if network is available
+		Boolean networkCheck = Utilities.NetworkCheck(this);
+		if (!networkCheck) {
+			Utilities.showAlertView(this, R.string.CannotShowContent, R.string.InternetNotFound);
+		} else {
+			mPrefs = getSharedPreferences("KnightsSetting", MODE_PRIVATE);
+			ListView listview = getListView();
+			new FeedLoadingTask(this, listview,
+			mPrefs.getString("newsurl", "http://ucfathletics.cstv.com/sports/m-footbl/headline-rss.xml"),
+			mPrefs.getString("newstitle", "Knights Athletics")).execute();
+			registerForContextMenu(listview);	
+		}
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
 		menu.setHeaderTitle("Select Options");
-		if (request.instapaperReady()) {
-			menu.add(Menu.NONE, 0, Menu.NONE, "Send to Instapaper");
-		}
+		menu.add(Menu.NONE, 0, Menu.NONE, "Send to Instapaper");
 		menu.add(Menu.NONE, 1, Menu.NONE, "Open In WebView");
 	}
 	
@@ -65,6 +67,7 @@ public class HeadlinesActivity extends ListActivity {
 		String link = news.getLink();
 		switch(item.getItemId()) {
 			case 0:
+				InstapaperRequest request = new InstapaperRequest(mPrefs);
 				request.urlString = link;
 				request.title = news.getTitle();
 				request.isPost = true;

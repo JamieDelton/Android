@@ -33,23 +33,19 @@ public class InstapaperRequest
 		this.prefs = mSP;
 	}
 	
-	private Boolean getEnabled() {
-		return prefs.getBoolean("instapaper_enabled", false);
-	}
-	
-	public String getUserName()
+	private String getUserName()
 	{
 		return prefs.getString("instapaper_username", "");
 	}
 	
-	public String getPassword()
+	private String getPassword()
 	{
 		return prefs.getString("instapaper_password", "");
 	}
 	
-	public Boolean instapaperReady()
+	private Boolean instapaperReady()
 	{
-		return getUserName().length() > 0 && getPassword().length() > 0;
+		return prefs.getBoolean("instapaper_enabled", false) && getUserName().length() > 0 && getPassword().length() > 0;
 	}
 
 	public void loadDataFromURLForcingBasicAuth(String url, Context context)
@@ -63,7 +59,7 @@ public class InstapaperRequest
 		try {
 			connection = (HttpURLConnection) new URL(url).openConnection();
 			connection.setUseCaches(false);
-			final String userandpass = getUserName() + ":" + getPassword();
+			String userandpass = getUserName() + ":" + getPassword();
 			connection.setRequestProperty("Authorization", "basic " + Base64.encode(userandpass.getBytes(), Base64.DEFAULT));
 			if (isPost) {
 				connection.setRequestMethod("POST");
@@ -97,7 +93,7 @@ public class InstapaperRequest
 			}
 
 			AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-			alertDialog.setTitle("Instapaper Result");
+			alertDialog.setTitle(R.string.Instapaper_result);
 			alertDialog.setMessage(message);
 			alertDialog.setPositiveButton(R.string.OK, null);
 			alertDialog.show();

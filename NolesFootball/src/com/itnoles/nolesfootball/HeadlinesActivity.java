@@ -15,7 +15,7 @@ package com.itnoles.nolesfootball;
 
 import com.itnoles.shared.*;
 
-import android.app.*;
+import android.app.ListActivity;
 import android.content.*;
 //import android.os.Bundle;
 import android.view.*;
@@ -24,7 +24,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
 public class HeadlinesActivity extends ListActivity {
-	private InstapaperRequest request;
+	private SharedPreferences mPrefs;
 	
 	/*@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -36,33 +36,26 @@ public class HeadlinesActivity extends ListActivity {
 	protected void onResume()
 	{
 		super.onResume();
-		
+
+		// Check to see if network is available
 		Boolean networkCheck = Utilities.NetworkCheck(this);
 		if (!networkCheck) {
-			AlertDialog.Builder ad = new AlertDialog.Builder(this);
-			ad.setTitle(R.string.CannotShowContent);
-			ad.setMessage(R.string.InternetNotFound);
-			ad.setPositiveButton(R.string.OK, null);
-			ad.show();
-			return;
+			Utilities.showAlertView(this, R.string.CannotShowContent, R.string.InternetNotFound);
+		} else {
+			mPrefs = getSharedPreferences("NolesSetting", MODE_PRIVATE);
+			ListView listview = getListView();
+			new FeedLoadingTask(this, listview,
+			mPrefs.getString("newsurl", "http://www.seminoles.com/sports/m-footbl/headline-rss.xml"),
+			mPrefs.getString("newstitle", "Noles Athletics")).execute();
+			registerForContextMenu(listview);	
 		}
-
-		SharedPreferences prefs = getSharedPreferences("NolesSetting", MODE_PRIVATE);
-		request = new InstapaperRequest(prefs);
-		ListView listview = getListView();
-		new FeedLoadingTask(this, listview,
-		prefs.getString("newsurl", "http://www.seminoles.com/sports/m-footbl/headline-rss.xml"),
-		prefs.getString("newstitle", "Noles Athletics")).execute();
-		registerForContextMenu(listview);
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
 		menu.setHeaderTitle("Select Options");
-		if (request.instapaperReady()) {
-			menu.add(Menu.NONE, 0, Menu.NONE, "Send to Instapaper");
-		}
+		menu.add(Menu.NONE, 0, Menu.NONE, "Send to Instapaper");
 		menu.add(Menu.NONE, 1, Menu.NONE, "Open In WebView");
 	}
 	
@@ -74,6 +67,7 @@ public class HeadlinesActivity extends ListActivity {
 		String link = news.getLink();
 		switch(item.getItemId()) {
 			case 0:
+				InstapaperRequest request = new InstapaperRequest(mPrefs);
 				request.urlString = link;
 				request.title = news.getTitle();
 				request.isPost = true;

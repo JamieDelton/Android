@@ -13,11 +13,13 @@
 // limitations under the License.
 package com.itnoles.shared;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.net.*;
 
 public class Utilities {
-	public static Boolean NetworkCheck(Context context) {
+	public static Boolean NetworkCheck(Context context)
+	{
 		final ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo info = cm.getActiveNetworkInfo();
 		Boolean mIsConnected = false;
@@ -25,5 +27,14 @@ public class Utilities {
 			mIsConnected = (info.getState() == NetworkInfo.State.CONNECTED);
 		}
 		return mIsConnected;
+	}
+	
+	public static void showAlertView(Context context, int title, int message)
+	{
+		AlertDialog.Builder ad = new AlertDialog.Builder(context);
+		ad.setTitle(title);
+		ad.setMessage(message);
+		ad.setPositiveButton(R.string.OK, null);
+		ad.show();
 	}
 }
