@@ -16,11 +16,11 @@ public final class R {
     }
     public static final class drawable {
         public static final int calendar=0x7f020000;
-        public static final int doakcambellstadium=0x7f020001;
-        public static final int gear2=0x7f020002;
-        public static final int icon=0x7f020003;
-        public static final int link=0x7f020004;
-        public static final int openbook=0x7f020005;
+        public static final int gear2=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int link=0x7f020003;
+        public static final int openbook=0x7f020004;
+        public static final int stadiumseating=0x7f020005;
         public static final int star=0x7f020006;
     }
     public static final class id {

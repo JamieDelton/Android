@@ -31,8 +31,8 @@ public class EditTextListener extends EditTextPreference
 			editor.putString(getKey(), getEditText().getText().toString());
 			editor.commit();
 			if (getKey().equals("instapaper_password")) {
-				InstapaperRequest request = new InstapaperRequest(settings);
-				request.loadDataFromURLForcingBasicAuth("https://www.instapaper.com/api/authenticate", getContext());
+				InstapaperRequest request = new InstapaperRequest(settings, getContext());
+				request.loadDataFromURLForcingBasicAuth(false, null);
 			}
 		}
 	}

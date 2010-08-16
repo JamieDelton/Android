@@ -47,7 +47,7 @@ public class FeedParser {
 		}
 	}
 	
-	private class RssHandler extends DefaultHandler {
+	private static class RssHandler extends DefaultHandler {
 		// names of the XML tags
 		private static final String PUB_DATE = "pubDate";
 		private static final String LINK = "link";

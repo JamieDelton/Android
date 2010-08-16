@@ -64,18 +64,14 @@ public class HeadlinesActivity extends ListActivity {
 	{
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		News news = (News) getListView().getAdapter().getItem(info.position);
-		String link = news.getLink();
 		switch(item.getItemId()) {
 			case 0:
-				InstapaperRequest request = new InstapaperRequest(mPrefs);
-				request.urlString = link;
-				request.title = news.getTitle();
-				request.isPost = true;
-				request.loadDataFromURLForcingBasicAuth("https://www.instapaper.com/api/add", this);
+				InstapaperRequest request = new InstapaperRequest(mPrefs, this);
+				request.loadDataFromURLForcingBasicAuth(true, news);
 			return true;
 			case 1:
 				Intent displayWebView = new Intent(this, WebViewActivity.class);
-				displayWebView.putExtra("url", link);
+				displayWebView.putExtra("url", news.getLink());
 				startActivity(displayWebView);
 			return true;
 		}

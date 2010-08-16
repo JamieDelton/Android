@@ -19,7 +19,7 @@
         <activity android:name="com.itnoles.shared.WebViewActivity"
 			android:theme="@style/Theme.NoBackground"
 		/>
-        <activity android:name="StadiumActivity" />
+        <activity android:name="com.itnoles.shared.StadiumActivity" />
     </application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />

@@ -16,14 +16,14 @@ package com.itnoles.shared;
 import java.io.*;
 import org.json.*;
 
-import android.app.Activity;
+import android.content.Context;
 
 public class JSONHelper {
 	private JSONObject json;
 	
-	public JSONHelper(String assetString, Activity activity) {
+	public JSONHelper(String assetString, Context context) {
 		try {
-			InputStream is = activity.getAssets().open(assetString);
+			InputStream is = context.getAssets().open(assetString);
 			int size = is.available();
 			byte[] buffer = new byte[size];
 			is.read(buffer);

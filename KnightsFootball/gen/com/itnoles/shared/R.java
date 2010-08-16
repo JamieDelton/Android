@@ -20,8 +20,8 @@ public final class R {
         public static final int icon=0x7f020002;
         public static final int link=0x7f020003;
         public static final int openbook=0x7f020004;
-        public static final int star=0x7f020005;
-        public static final int ucfseating=0x7f020006;
+        public static final int stadiumseating=0x7f020005;
+        public static final int star=0x7f020006;
     }
     public static final class id {
         public static final int date=0x7f070001;

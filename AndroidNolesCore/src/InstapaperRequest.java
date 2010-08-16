@@ -13,9 +13,15 @@
 // limitations under the License.
 package com.itnoles.shared;
 
-import java.lang.Exception;
-import java.net.*;
-import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.app.AlertDialog;
 import android.content.*;
@@ -24,13 +30,12 @@ import android.util.Base64;
 public class InstapaperRequest
 {
 	private SharedPreferences prefs;
-	public boolean isPost = false;
-	public String urlString = null;
-	public String title = null;
+	private Context context;
 	
-	public InstapaperRequest(SharedPreferences mSP)
+	public InstapaperRequest(SharedPreferences mSP, Context context)
 	{
 		this.prefs = mSP;
+		this.context = context;
 	}
 	
 	private String getUserName()
@@ -48,61 +53,66 @@ public class InstapaperRequest
 		return prefs.getBoolean("instapaper_enabled", false) && getUserName().length() > 0 && getPassword().length() > 0;
 	}
 
-	public void loadDataFromURLForcingBasicAuth(String url, Context context)
+	public void loadDataFromURLForcingBasicAuth(Boolean isPost, News news)
 	{
 		// If it is not ready or connection is not available, don't try to open the connection.
 		Boolean networkCheck = Utilities.NetworkCheck(context);
 		if (!instapaperReady() || !networkCheck) 
 			return;
 
-		HttpURLConnection connection = null;
-		try {
-			connection = (HttpURLConnection) new URL(url).openConnection();
-			connection.setUseCaches(false);
-			String userandpass = getUserName() + ":" + getPassword();
-			connection.setRequestProperty("Authorization", "basic " + Base64.encode(userandpass.getBytes(), Base64.DEFAULT));
-			if (isPost) {
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				connection.setDoOutput(true);
-				
-				// Send Request
-				OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-				out.write("url=" + URLEncoder.encode(urlString, "UTF-8") + ",title=" + title);
-				out.flush();
-				out.close();
-			} else {
-				connection.connect();
+		HttpClient httpClient = new DefaultHttpClient();
+		String userandpass = getUserName() + ":" + getPassword();
+		if (isPost) {
+			HttpPost httpPost = new HttpPost("https://www.instapaper.com/api/add");
+			httpPost.addHeader("Authorization", "basic " + Base64.encode(userandpass.getBytes(), Base64.DEFAULT));
+			try {
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+				nameValuePairs.add(new BasicNameValuePair("url", news.getLink()));
+				nameValuePairs.add(new BasicNameValuePair("title", news.getTitle()));
+				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				HttpResponse httpResponse = httpClient.execute(httpPost);
+				getStatusCode(httpResponse);
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			final String message;
-			switch(connection.getResponseCode()) {
-				case HttpURLConnection.HTTP_CREATED:
-					message = "This URL has been successfully added to this Instapaper account.";
-				break;
-				case HttpURLConnection.HTTP_BAD_REQUEST:
-					message = "Bad request.";
-				break;
-				case HttpURLConnection.HTTP_FORBIDDEN:
-					message = "Invalid username or password.";
-				break;
-				case HttpURLConnection.HTTP_INTERNAL_ERROR:
-					message = "The service encountered an error. Please try again later.";
-				break;
-				default:
-					message = "OK";
-			}
-
-			AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-			alertDialog.setTitle(R.string.Instapaper_result);
-			alertDialog.setMessage(message);
-			alertDialog.setPositiveButton(R.string.OK, null);
-			alertDialog.show();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				connection.disconnect();
+		} else {
+			HttpGet httpGet = new HttpGet("https://www.instapaper.com/api/authenticate");
+			httpGet.addHeader("Authorization", "basic " + Base64.encode(userandpass.getBytes(), Base64.DEFAULT));
+			try {
+				HttpResponse httpResponse = httpClient.execute(httpGet);
+				getStatusCode(httpResponse);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void getStatusCode(HttpResponse response)
+	{
+		final String message;
+		switch(response.getStatusLine().getStatusCode()) {
+			case HttpStatus.SC_CREATED:
+				message = "This URL has been successfully added to this Instapaper account.";
+			break;
+			case HttpStatus.SC_BAD_REQUEST:
+				message = "Bad request.";
+			break;
+			case HttpStatus.SC_FORBIDDEN:
+				message = "Invalid username or password.";
+			break;
+			case HttpStatus.SC_INTERNAL_SERVER_ERROR:
+				message = "The service encountered an error. Please try again later.";
+			break;
+			default:
+				message = "OK";
+		}
+
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+		alertDialog.setTitle(R.string.Instapaper_result);
+		alertDialog.setMessage(message);
+		alertDialog.setPositiveButton(R.string.OK, null);
+		alertDialog.show();
 	}
 }
