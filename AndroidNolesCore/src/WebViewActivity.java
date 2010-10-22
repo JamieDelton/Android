@@ -19,10 +19,12 @@ import android.webkit.*;
 import android.view.Window;
 import android.widget.Toast;
 
-public class WebViewActivity extends Activity {
-	/** Called when the activity is first created. */
+public class WebViewActivity extends Activity
+{
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	// Called when the activity is first created.
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		
 		// Let's display the progress in the activity title bar, like the
@@ -33,21 +35,21 @@ public class WebViewActivity extends Activity {
 		setContentView(webview);
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.getSettings().setBuiltInZoomControls(true);
-
-		 final WebViewActivity activity = this;
-		 webview.setWebChromeClient(new WebChromeClient() {
-		   public void onProgressChanged(WebView view, int progress) {
-		     // Activities and WebViews measure progress with different scales.
-		     // The progress meter will automatically disappear when we reach 100%
-		     activity.setProgress(progress * 100);
-		   }
-		 });
-
-		 webview.setWebViewClient(new WebViewClient() {
-		   public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-		     Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
-		   }
-		 });
+		
+		final WebViewActivity activity = this;
+		webview.setWebChromeClient(new WebChromeClient() {
+			public void onProgressChanged(WebView view, int progress) {
+				// Activities and WebViews measure progress with different scales.
+				// The progress meter will automatically disappear when we reach 100%
+				activity.setProgress(progress * 100);
+			}
+		});
+		
+		webview.setWebViewClient(new WebViewClient() {
+			public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+				Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
+			}
+		});
 
  		webview.loadUrl(getIntent().getExtras().getString("url"));
     }

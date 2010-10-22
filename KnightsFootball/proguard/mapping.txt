@@ -1,0 +1,115 @@
+com.itnoles.knightfootball.HeadlinesActivity -> com.itnoles.knightfootball.HeadlinesActivity:
+    android.content.SharedPreferences mPrefs -> a
+    com.itnoles.shared.SeparatedListAdapter adapter -> b
+    void onResume() -> onResume
+    void onTaskComplete() -> a
+    void preReadData() -> b
+    void readData() -> c
+    void onCreateContextMenu(android.view.ContextMenu,android.view.View,android.view.ContextMenu$ContextMenuInfo) -> onCreateContextMenu
+    boolean onContextItemSelected(android.view.MenuItem) -> onContextItemSelected
+com.itnoles.knightfootball.KnightFootball -> com.itnoles.knightfootball.KnightFootball:
+    void onCreate(android.os.Bundle) -> onCreate
+com.itnoles.knightfootball.LinkActivity -> com.itnoles.knightfootball.LinkActivity:
+    java.lang.String[] a -> a
+    void onCreate(android.os.Bundle) -> onCreate
+    void onListItemClick(android.widget.ListView,android.view.View,int,long) -> onListItemClick
+com.itnoles.knightfootball.ScheduleActivity -> com.itnoles.knightfootball.ScheduleActivity:
+    org.json.JSONArray a -> a
+    void onCreate(android.os.Bundle) -> onCreate
+    void a() -> a
+    void c() -> b
+com.itnoles.knightfootball.SettingsActivity -> com.itnoles.knightfootball.SettingsActivity:
+    android.preference.ListPreference a -> a
+    android.preference.CheckBoxPreference b -> b
+    android.preference.EditTextPreference c -> c
+    android.preference.EditTextPreference d -> d
+    void onCreate(android.os.Bundle) -> onCreate
+    void onPause() -> onPause
+    void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+com.itnoles.knightfootball.StaffActivity -> com.itnoles.knightfootball.StaffActivity:
+    org.json.JSONArray a -> a
+    void onCreate(android.os.Bundle) -> onCreate
+    void a() -> a
+    void c() -> b
+com.itnoles.knightfootball.a -> com.itnoles.knightfootball.a:
+    com.itnoles.knightfootball.ScheduleActivity a -> a
+    void onClick(android.view.View) -> onClick
+com.itnoles.knightfootball.b -> com.itnoles.knightfootball.b:
+    int[] a -> a
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+com.itnoles.shared.BackgroundTask -> com.itnoles.shared.a:
+    com.itnoles.shared.helper.AsyncTaskCompleteListener callback -> a
+    void onPreExecute() -> onPreExecute
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.itnoles.shared.InstapaperRequest -> com.itnoles.shared.b:
+    android.content.SharedPreferences prefs -> a
+    android.content.Context context -> b
+    void postDataURLForcingBasicAuth(com.itnoles.shared.News) -> a
+com.itnoles.shared.News -> com.itnoles.shared.c:
+    java.lang.String mTitle -> a
+    java.lang.String mLink -> b
+    java.lang.String mPubdate -> c
+    java.lang.String getTitle() -> a
+    void setTitle(java.lang.String) -> a
+    java.lang.String getLink() -> b
+    void setLink(java.lang.String) -> b
+    void setPubdate(java.lang.String) -> c
+    java.lang.String getPubdate() -> c
+com.itnoles.shared.SeparatedListAdapter -> com.itnoles.shared.d:
+    java.util.Map sections -> a
+    android.widget.ArrayAdapter headers -> b
+    java.lang.Object getItem(int) -> getItem
+    int getCount() -> getCount
+    int getViewTypeCount() -> getViewTypeCount
+    int getItemViewType(int) -> getItemViewType
+    boolean isEnabled(int) -> isEnabled
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    long getItemId(int) -> getItemId
+com.itnoles.shared.StadiumActivity -> com.itnoles.shared.StadiumActivity:
+    void onCreate(android.os.Bundle) -> onCreate
+com.itnoles.shared.WebViewActivity -> com.itnoles.shared.WebViewActivity:
+    void onCreate(android.os.Bundle) -> onCreate
+com.itnoles.shared.WebViewActivity$1 -> com.itnoles.shared.e:
+    com.itnoles.shared.WebViewActivity val$activity -> a
+    void onProgressChanged(android.webkit.WebView,int) -> onProgressChanged
+com.itnoles.shared.WebViewActivity$2 -> com.itnoles.shared.f:
+    com.itnoles.shared.WebViewActivity val$activity -> a
+    void onReceivedError(android.webkit.WebView,int,java.lang.String,java.lang.String) -> onReceivedError
+com.itnoles.shared.a -> com.itnoles.shared.g:
+    com.itnoles.shared.a.a a -> a
+    void onPreExecute() -> onPreExecute
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.itnoles.shared.a.a -> com.itnoles.shared.a.a:
+    void a() -> a
+    void c() -> b
+com.itnoles.shared.a.b -> com.itnoles.shared.a.b:
+    void onDialogClosed(boolean) -> onDialogClosed
+com.itnoles.shared.a.e -> com.itnoles.shared.a.c:
+    org.json.JSONArray a(java.lang.String) -> a
+com.itnoles.shared.b -> com.itnoles.shared.h:
+    android.content.SharedPreferences a -> a
+    android.content.Context b -> b
+    void a() -> a
+com.itnoles.shared.helper.AsyncTaskCompleteListener -> com.itnoles.shared.b.a:
+    void onTaskComplete() -> a
+    void preReadData() -> b
+    void readData() -> c
+com.itnoles.shared.helper.FeedParser -> com.itnoles.shared.b.b:
+    java.util.List parse(java.lang.String) -> a
+com.itnoles.shared.helper.FeedParser$RssHandler -> com.itnoles.shared.b.c:
+    java.text.SimpleDateFormat RFC822_DATE_FORMAT -> a
+    java.text.SimpleDateFormat ISO8601_DATE_FORMATS -> b
+    java.util.List messages -> c
+    com.itnoles.shared.News currentMessage -> d
+    java.lang.StringBuilder builder -> e
+    java.lang.String mHrefAttribute -> f
+    java.util.List getMessages() -> a
+    void startElement(java.lang.String,java.lang.String,java.lang.String,org.xml.sax.Attributes) -> startElement
+    void endElement(java.lang.String,java.lang.String,java.lang.String) -> endElement
+    void characters(char[],int,int) -> characters
+    void setDate(java.text.SimpleDateFormat) -> a
+com.itnoles.shared.helper.NewsAdapter -> com.itnoles.shared.b.d:
+    java.util.List items -> a
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView

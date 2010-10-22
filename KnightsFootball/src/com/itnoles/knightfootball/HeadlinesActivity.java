@@ -13,7 +13,10 @@
 // limitations under the License.
 package com.itnoles.knightfootball;
 
+import java.util.List;
+
 import com.itnoles.shared.*;
+import com.itnoles.shared.helper.*;
 
 import android.app.ListActivity;
 import android.content.*;
@@ -21,10 +24,10 @@ import android.content.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ListView;
 
-public class HeadlinesActivity extends ListActivity {
+public class HeadlinesActivity extends ListActivity implements AsyncTaskCompleteListener {
 	private SharedPreferences mPrefs;
+	private SeparatedListAdapter adapter;
 	
 	/*@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -37,18 +40,30 @@ public class HeadlinesActivity extends ListActivity {
 	{
 		super.onResume();
 		
-		// Check to see if network is available
-		Boolean networkCheck = Utilities.NetworkCheck(this);
-		if (!networkCheck) {
-			Utilities.showAlertView(this, R.string.CannotShowContent, R.string.InternetNotFound);
-		} else {
-			mPrefs = getSharedPreferences("KnightsSetting", MODE_PRIVATE);
-			ListView listview = getListView();
-			new FeedLoadingTask(this, listview,
-			mPrefs.getString("newsurl", "http://ucfathletics.cstv.com/sports/m-footbl/headline-rss.xml"),
-			mPrefs.getString("newstitle", "Knights Athletics")).execute();
-			registerForContextMenu(listview);	
-		}
+		mPrefs = getSharedPreferences("KnightsSetting", MODE_PRIVATE);
+		
+		new BackgroundTask(this).execute();
+		registerForContextMenu(getListView());
+	}
+	
+	// Display Data to ListView
+	public void onTaskComplete()
+	{
+		setListAdapter(adapter);
+	}
+	
+	// Before Display the data
+	public void preReadData()
+	{
+		Utilities.showToast(this, R.string.ReadingRSS);
+	}
+	
+	// Do This stuff in Background
+	public void readData()
+	{
+		List<News> news = FeedParser.parse(mPrefs.getString("newsurl", "http://ucfathletics.cstv.com/sports/m-footbl/headline-rss.xml"));
+		adapter = new SeparatedListAdapter(this);
+		adapter.addSection(mPrefs.getString("newstitle", "Knights Athletics"), new NewsAdapter(this, news));
 	}
 
 	@Override
@@ -67,10 +82,11 @@ public class HeadlinesActivity extends ListActivity {
 		switch(item.getItemId()) {
 			case 0:
 				InstapaperRequest request = new InstapaperRequest(mPrefs, this);
-				request.loadDataFromURLForcingBasicAuth(true, news);
+				request.postDataURLForcingBasicAuth(news);
 			return true;
 			case 1:
-				Intent displayWebView = new Intent(this, WebViewActivity.class);
+				final Intent displayWebView = new Intent();
+				displayWebView.setClass(this, WebViewActivity.class);
 				displayWebView.putExtra("url", news.getLink());
 				startActivity(displayWebView);
 			return true;

@@ -16,47 +16,52 @@ package com.itnoles.knightfootball;
 import java.util.*;
 import org.json.*;
 
-import com.itnoles.shared.JSONHelper;
+import com.itnoles.shared.BackgroundTask;
+import com.itnoles.shared.helper.*;
 
 import android.app.ListActivity;
-import android.os.*;
+import android.os.Bundle;
 import android.widget.SimpleAdapter;
 
-public class StaffActivity extends ListActivity {
-	private class StaffLoadingTask extends AsyncTask<Void, Void, Void> {
-		@Override
-		protected void onPostExecute(Void result) {
-			if (json != null) {
-				List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
-				try {
-					JSONArray lineItems = (JSONArray)json.get("staff");
-					for (int i = 0; i < lineItems.length(); ++i) {
-						HashMap<String, String> map = new HashMap<String, String>();
-						JSONObject rec = lineItems.getJSONObject(i);
-						map.put("name", rec.getString("name"));
-						map.put("position", rec.getString("positions"));
-						list.add(map);
-					}
-					setListAdapter(new SimpleAdapter(StaffActivity.this, list, android.R.layout.simple_list_item_2,
-					new String[] {"name", "position"}, new int[] {android.R.id.text1, android.R.id.text2}));
-				} catch (JSONException e) {
-					throw new RuntimeException(e);
+public class StaffActivity extends ListActivity implements AsyncTaskCompleteListener
+{
+	private JSONArray json;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		new BackgroundTask(this).execute();
+	}
+	
+	// Display Data to ListView
+	public void onTaskComplete()
+	{
+		if (json != null)
+		{
+			List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+			try {
+				for (Object o : json) {
+					JSONObject rec = (JSONObject) o;
+					HashMap<String, String> map = new HashMap<String, String>();
+					map.put("name", rec.getString("name"));
+					map.put("position", rec.getString("positions"));
+					list.add(map);
 				}
+				setListAdapter(new SimpleAdapter(StaffActivity.this, list, android.R.layout.simple_list_item_2,
+				new String[] {"name", "position"}, new int[] {android.R.id.text1, android.R.id.text2}));
+			} catch (JSONException e) {
+				throw new RuntimeException(e);
 			}
 		}
-		
-		@Override
-		protected Void doInBackground(Void... arg0) {
-			JSONHelper jsonHelper = new JSONHelper("staff.json", StaffActivity.this);
-			json = jsonHelper.getJSONObject();
-			return null;
-		}
 	}
-
-	private JSONObject json;
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		new StaffLoadingTask().execute();
+	
+	// Before Display the data
+	public void preReadData(){}
+	
+	// Do This stuff in Background
+	public void readData()
+	{
+		json = JSONHelper.getJSONArray("http://jonathan.theoks.net/appstuff/knights_staff.json");
 	}
 }

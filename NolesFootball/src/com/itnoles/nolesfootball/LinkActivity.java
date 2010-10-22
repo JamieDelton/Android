@@ -28,7 +28,6 @@ public class LinkActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, LINK));
 	}
 	
@@ -37,22 +36,17 @@ public class LinkActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 
 		final String url;
-		if (position == 0) {
-			url = "http://www.seminoles.com/tickets/fsu-tickets.html";
-		} else if (position == 1) {
-			url = "http://www.seminoles.com/genrel/nole-zone.html";
-		} else if (position == 2) {
-			url = "http://seminole-boosters.fsu.edu/Community/Page.aspx?pid=520&srcid=223";
-		} else if (position == 3) {
-			url = "http://www.seminoles.com/multimedia/broadcast.html";
-		} else if (position == 4) {
-			url = "http://www.seminoles.com/trads/fsu-trads.html";
-		} else if (position == 5) {
-			url = "http://www.seminoles.com/genrel/rankings.html";
-		} else {
-			url = "http://www.seminoles.com/podcasts/fsu-podcasts.html";
+		switch(position) {
+			case 0: url = "http://www.seminoles.com/tickets/fsu-tickets.html"; break;
+			case 1: url = "http://www.seminoles.com/genrel/nole-zone.html"; break;
+			case 2: url = "http://seminole-boosters.fsu.edu/Community/Page.aspx?pid=520&srcid=223"; break;
+			case 3: url = "http://www.seminoles.com/multimedia/broadcast.html"; break;
+			case 4: url = "http://www.seminoles.com/trads/fsu-trads.html"; break;
+			case 5: url = "http://www.seminoles.com/genrel/rankings.html"; break;
+			default: url = "http://www.seminoles.com/podcasts/fsu-podcasts.html"; break;
 		}
-        /* Take string from url and parse it to the default browsers */
+		
+		/* Take string from url and parse it to the default browsers */
 		final Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		startActivity(viewIntent);
 	}

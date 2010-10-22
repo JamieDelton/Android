@@ -16,49 +16,22 @@ package com.itnoles.knightfootball;
 import java.util.*;
 import org.json.*;
 
-import com.itnoles.shared.JSONHelper;
+import com.itnoles.shared.*;
+import com.itnoles.shared.helper.*;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.os.*;
+import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 
-public class ScheduleActivity extends ListActivity {
-	private class ScheduleLoadingTask extends AsyncTask<Void, Void, Void> {
-		@Override
-		protected void onPostExecute(Void result) {
-			if (json != null) {
-				List<HashMap<String, String>> staffEntries = new ArrayList<HashMap<String, String>>();
-				try {
-					JSONArray lineItems = (JSONArray)json.get("schedule");
-					for (int i = 0; i < lineItems.length(); ++i) {
-						HashMap<String, String> map = new HashMap<String, String>();
-						JSONObject rec = lineItems.getJSONObject(i);
-						map.put("date", rec.getString("date") + "     " + rec.getString("time"));
-						map.put("school", rec.getString("school"));
-						map.put("tv", rec.getString("tv"));
-						staffEntries.add(map);
-					}
-					setListAdapter(new ColorAdapter(staffEntries));
-				} catch (JSONException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-		
-		@Override
-		protected Void doInBackground(Void... arg0) {
-			JSONHelper jsonHelper = new JSONHelper("schedule.json", ScheduleActivity.this);
-			json = jsonHelper.getJSONObject();
-			return null;
-		}
-	}
-	
-	private JSONObject json;
+public class ScheduleActivity extends ListActivity implements AsyncTaskCompleteListener
+{
+	private JSONArray json;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_main);
 		final Button stadiumButton = (Button)this.findViewById(R.id.stadiumButton);
@@ -68,19 +41,53 @@ public class ScheduleActivity extends ListActivity {
 					// Perform action on click
 					startActivity(new Intent(ScheduleActivity.this, StadiumActivity.class));
 				}
-			});
+			});	
 		}
-		new ScheduleLoadingTask().execute();
+		new BackgroundTask(this).execute();
 	}
 
-	private class ColorAdapter extends SimpleAdapter {
+	// Display Data to ListView
+	public void onTaskComplete()
+	{
+		if (json != null)
+		{
+			List<HashMap<String, String>> entries = new ArrayList<HashMap<String, String>>();
+			try {
+				for (Object o : json) {
+					JSONObject rec = (JSONObject) o;
+					HashMap<String, String> map = new HashMap<String, String>();
+					map.put("date", rec.getString("date"));
+					map.put("school", rec.getString("school"));
+					map.put("footer", rec.getString("footer"));
+					entries.add(map);
+				}
+				setListAdapter(new ColorAdapter(entries));
+			} catch (JSONException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	// Before Display the data
+	public void preReadData(){}
+	
+	// Do This stuff in Background
+	public void readData()
+	{
+		json = JSONHelper.getJSONArray("http://jonathan.theoks.net/appstuff/knights_schedule.json");
+	}
+	
+	private class ColorAdapter extends SimpleAdapter
+	{
 		private int[] colors = new int[] { 0xFFFFFFFF, 0xFFD1D1D1 };
-		public ColorAdapter(List<HashMap<String, String>> items) {
-			super(ScheduleActivity.this, items, R.layout.schedule, new String[] {"date", "school", "tv"}, new int[] {R.id.date, R.id.school, R.id.tv});
+		public ColorAdapter(List<HashMap<String, String>> items)
+		{
+			super(ScheduleActivity.this, items, R.layout.schedule, new String[] {"date", "school", "footer"}, new int[] {R.id.date, R.id.school, R.id.tv});
 		}
 		
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
 			View view = super.getView(position, convertView, parent);
 			int colorPos = position % colors.length;
 			view.setBackgroundColor(colors[colorPos]);

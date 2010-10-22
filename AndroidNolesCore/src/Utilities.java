@@ -13,28 +13,48 @@
 // limitations under the License.
 package com.itnoles.shared;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.net.*;
+import android.widget.Toast;
 
-public class Utilities {
+/**
+ * Helper class
+ * @author Jonathan Steele
+ */
+
+public final class Utilities {
+	/**
+	 * NetworkCheck
+	 * Checking to see Network is connected
+	 * @param context Activity's Context
+	 * @return true or false
+	 */
 	public static Boolean NetworkCheck(Context context)
 	{
 		final ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo info = cm.getActiveNetworkInfo();
-		Boolean mIsConnected = false;
-		if (info != null) {
-			mIsConnected = (info.getState() == NetworkInfo.State.CONNECTED);
-		}
-		return mIsConnected;
+		return (info != null) ? (info.getState() == NetworkInfo.State.CONNECTED) : false;
 	}
 	
-	public static void showAlertView(Context context, int title, int message)
+	/**
+	 * showToast 
+	 * it is showing Toast notification with a long peroid of time
+	 * @param context Activity's Context
+	 * @param message string that show up in the box
+	 */
+	public static void showToast(Context context, String message)
 	{
-		AlertDialog.Builder ad = new AlertDialog.Builder(context);
-		ad.setTitle(title);
-		ad.setMessage(message);
-		ad.setPositiveButton(R.string.OK, null);
-		ad.show();
+		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+	}
+	
+	/**
+	 * showToast 
+	 * it is showing Toast notification with a long peroid of time
+	 * @param context Activity's Context
+	 * @param message resources string that show up in the box
+	 */
+	public static void showToast(Context context, int message)
+	{
+		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 }

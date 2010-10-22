@@ -20,26 +20,26 @@ public class News {
 	
 	// getters and setters omitted for brevity
 	public String getTitle() {
-		return this.mTitle;
+		return mTitle;
 	}
 
 	public void setTitle(String title) {
-		this.mTitle = title;
+		mTitle = title;
 	}
 
 	public String getLink() {
-		return this.mLink;
+		return mLink;
 	}
 
 	public void setLink(String link) {
-		this.mLink = link;
+		mLink = link;
 	}
 
 	public void setPubdate(String pubdate) {
-		this.mPubdate = pubdate;
+		mPubdate = pubdate;
 	}
 	
 	public String getPubdate() {
-		return this.mPubdate;
+		return mPubdate;
 	}
 }

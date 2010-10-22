@@ -13,7 +13,10 @@
 // limitations under the License.
 package com.itnoles.nolesfootball;
 
+import java.util.List;
+
 import com.itnoles.shared.*;
+import com.itnoles.shared.helper.*;
 
 import android.app.ListActivity;
 import android.content.*;
@@ -21,10 +24,10 @@ import android.content.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ListView;
 
-public class HeadlinesActivity extends ListActivity {
+public class HeadlinesActivity extends ListActivity implements AsyncTaskCompleteListener {
 	private SharedPreferences mPrefs;
+	private SeparatedListAdapter adapter;
 	
 	/*@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -36,21 +39,34 @@ public class HeadlinesActivity extends ListActivity {
 	protected void onResume()
 	{
 		super.onResume();
+		
+		mPrefs = getSharedPreferences("NolesSetting", MODE_PRIVATE);
 
-		// Check to see if network is available
-		Boolean networkCheck = Utilities.NetworkCheck(this);
-		if (!networkCheck) {
-			Utilities.showAlertView(this, R.string.CannotShowContent, R.string.InternetNotFound);
-		} else {
-			mPrefs = getSharedPreferences("NolesSetting", MODE_PRIVATE);
-			ListView listview = getListView();
-			new FeedLoadingTask(this, listview,
-			mPrefs.getString("newsurl", "http://www.seminoles.com/sports/m-footbl/headline-rss.xml"),
-			mPrefs.getString("newstitle", "Noles Athletics")).execute();
-			registerForContextMenu(listview);
-		}
+		new BackgroundTask(this).execute();
+		registerForContextMenu(getListView());
 	}
-
+	
+	// Display Data to ListView
+	public void onTaskComplete()
+	{
+		setListAdapter(adapter);
+	}
+	
+	// Before Display the data
+	public void preReadData()
+	{
+		Utilities.showToast(this, R.string.ReadingRSS);
+	}
+	
+	// Do This stuff in Background
+	public void readData()
+	{
+		List<News> news = FeedParser.parse(mPrefs.getString("newsurl", "http://www.seminoles.com/sports/m-footbl/headline-rss.xml"));
+		adapter = new SeparatedListAdapter(this);
+		adapter.addSection(mPrefs.getString("newstitle", "Noles Athletics"), new NewsAdapter(this, news));
+	}
+	
+	// Show the list in the context menu
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
@@ -59,19 +75,22 @@ public class HeadlinesActivity extends ListActivity {
 		menu.add(Menu.NONE, 1, Menu.NONE, "Open In WebView");
 	}
 	
+	
+	// When the users selected the item id in the cotext menu, it called specific item action.
 	@Override
 	public boolean onContextItemSelected(MenuItem item)
 	{
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		News news = (News) getListView().getAdapter().getItem(info.position);
+		News newsList = (News) getListAdapter().getItem(info.position);
 		switch(item.getItemId()) {
 			case 0:
 				InstapaperRequest request = new InstapaperRequest(mPrefs, this);
-				request.loadDataFromURLForcingBasicAuth(true, news);
+				request.postDataURLForcingBasicAuth(newsList);
 			return true;
 			case 1:
-				Intent displayWebView = new Intent(this, WebViewActivity.class);
-				displayWebView.putExtra("url", news.getLink());
+				final Intent displayWebView = new Intent();
+				displayWebView.setClass(this, WebViewActivity.class);
+				displayWebView.putExtra("url", newsList.getLink());
 				startActivity(displayWebView);
 			return true;
 		}

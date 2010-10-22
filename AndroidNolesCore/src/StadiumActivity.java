@@ -17,10 +17,12 @@ import android.app.Activity;
 import android.view.View;
 import android.os.Bundle;
 
-public class StadiumActivity extends Activity {
-	/** Called when the activity is first created. */
+public class StadiumActivity extends Activity
+{
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	// Called when the activity is first created.
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		
 		View view = new View(this);
