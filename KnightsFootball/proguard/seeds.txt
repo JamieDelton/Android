@@ -1,8 +1,0 @@
-com.itnoles.shared.StadiumActivity
-com.itnoles.shared.WebViewActivity
-com.itnoles.knightfootball.KnightFootball
-com.itnoles.knightfootball.HeadlinesActivity
-com.itnoles.knightfootball.LinkActivity
-com.itnoles.knightfootball.ScheduleActivity
-com.itnoles.knightfootball.StaffActivity
-com.itnoles.knightfootball.SettingsActivity
