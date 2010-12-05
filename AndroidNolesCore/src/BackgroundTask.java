@@ -15,13 +15,15 @@ package com.itnoles.shared;
 
 import android.os.AsyncTask;
 
+import com.itnoles.shared.helper.AsyncTaskCompleteListener;
+
 /**
  * BackgroundTask
  * it is the class has a delegate for AsyncTask class.
  * @author Jonathan Steele
  */
 
-public final class BackgroundTask extends AsyncTask<Void, Void, Void> {
+public class BackgroundTask extends AsyncTask<Void, Void, Void> {
 	private AsyncTaskCompleteListener callback;
 
 	// Constructor
@@ -35,23 +37,10 @@ public final class BackgroundTask extends AsyncTask<Void, Void, Void> {
 		callback.onTaskComplete();
 	}
 	
-	// Runs on the UI thread before doInBackground
-	@Override
-	protected void onPreExecute() {
-		callback.preReadData();
-	}
-	
 	// perform a computation on a background thread
 	@Override
 	protected Void doInBackground(Void... arg0) {
 		callback.readData();
 		return null;
-	}
-	
-	public interface AsyncTaskCompleteListener
-	{
-		public void onTaskComplete();
-		public void preReadData();
-		public void readData();
 	}
 }

@@ -11,7 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.itnoles.shared;
+package com.itnoles.knightfootball;
+
+import android.util.Log;
 
 import java.util.*;
 
@@ -28,16 +30,18 @@ import org.apache.http.protocol.HTTP;
 import com.itnoles.shared.helper.AbstractOAuthAccounts;
 
 /**
- * OAuth class for StatusNet that is compitable with Twitter.
+ * OAuth class for Twitter
  * @author Jonathan Steele
  */
-public final class StatusNetOAuth extends AbstractOAuthAccounts {
+public class TwitterOAuth extends AbstractOAuthAccounts {
+	private static final String TAG = "TwitterOAuth";
+	private static final String CALLBACK_URL = "knightsfb://twitter";
 	private CommonsHttpOAuthConsumer consumer = new CommonsHttpOAuthConsumer("key go here", "secret go here");
 	
-	public StatusNetOAuth() {
-		super("http://xfsunoles.status.net/api/oauth/request_token",
-		"http://xfsunoles.status.net/api/oauth/access_token",
-		"http://xfsunoles.status.net/api/oauth/authorize");
+	public TwitterOAuth() {
+		super("https://api.twitter.com/oauth/request_token",
+		"https://api.twitter.com/oauth/access_token",
+		"https://api.twitter.com/oauth/authorize", CALLBACK_URL);
 		super.setConsumer(consumer);
 	}
 	
@@ -48,8 +52,8 @@ public final class StatusNetOAuth extends AbstractOAuthAccounts {
 	@Override
 	public void postData(String status) {
 		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost("http://xfsunoles.status.net/api/statuses/update.xml");
-		final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		HttpPost post = new HttpPost("http://api.twitter.com/version/statuses/update.xml");
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 		nvps.add(new BasicNameValuePair("status", status));
 		try {
 			post.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
@@ -58,11 +62,15 @@ public final class StatusNetOAuth extends AbstractOAuthAccounts {
 			// sign the request
 			consumer.sign(post);
 			// send the request
-			final HttpResponse response = client.execute(post);
-			// release connection  
-			response.getEntity().consumeContent();
+			HttpResponse response = client.execute(post);
+			// release all allocated resources if it is not null
+			HttpEntity entity = response.getEntity();
+			if (entity != null)
+				entity.consumeContent();
+			// shut down the connection manager
+			client.getConnectionManager().shutdown();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, "bad post data", e);
 		}
 	}
 }

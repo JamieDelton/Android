@@ -13,18 +13,19 @@
 // limitations under the License.
 package com.itnoles.shared;
 
-import java.util.*;
-
 import org.apache.http.*;
-import org.apache.http.client.*;
+import org.apache.http.auth.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.*;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.AlertDialog;
-import android.content.*;
-import android.util.Base64;
+import android.content.*; //SharedPreference and Context
+import android.util.Log;
+
+import java.util.*; //List and ArrayList
+
+import com.itnoles.shared.helper.SimpleCrypto;
 
 /**
  * InstapaperRequest
@@ -32,69 +33,113 @@ import android.util.Base64;
  * @author Jonathan Steele
  */
 
-public final class InstapaperRequest
+public class InstapaperRequest
 {
+	private static final String TAG = "InstapaperRequest";
 	private SharedPreferences prefs;
-	private Context context;
-	private static final HttpClient httpClient = new DefaultHttpClient();
+
+	public static final String INSTAPAPER_ENABLED = "instapaper_enabled";
+	public static final String INSTAPAPER_USERNAME = "instapaper_username";
+	public static final String INSTAPAPER_PASSWORD = "instapaper_password";
 	
 	// Constructor
-	public InstapaperRequest(SharedPreferences mSP, Context ctx)
+	public InstapaperRequest(SharedPreferences mSP)
 	{
 		this.prefs = mSP;
-		this.context = ctx;
+	}
+	
+	private String getUserName() throws Exception {
+		return SimpleCrypto.decrypt(INSTAPAPER_USERNAME, prefs.getString(INSTAPAPER_USERNAME, ""));
+	}
+	
+	private String getPassword() throws Exception {
+		return SimpleCrypto.decrypt(INSTAPAPER_PASSWORD, prefs.getString(INSTAPAPER_PASSWORD, ""));
 	}
 	
 	// make sure it is ready for making a request
 	private Boolean isInstapaperReady()
 	{
 		// If it is not ready, don't try to open the connection.
-		return prefs.getBoolean("instapaper_enabled", false) && getUserName().length() > 0 && getPassword().length() > 0;
+		try {
+			return prefs.getBoolean(INSTAPAPER_ENABLED, false) && getUserName().length() > 0 && getPassword().length() > 0;
+		} catch (Exception e) {
+			Log.e(TAG, "bad boolean", e);
+			return false;
+		}
 	}
 	
-	// get user and password from shared preference in base64 form
-	private byte[] getBytesFromUserAndPass()
+	private DefaultHttpClient createCredentials()
 	{
-		return prefs.getString("instapaper_username", "") + ":" + prefs.getString("instapaper_password", "").getBytes();
+		// create credentials for basic auth
+		UsernamePasswordCredentials upc = null;
+		try {
+			upc = new UsernamePasswordCredentials(getUserName(),getPassword());
+		} catch (Exception e) {
+			Log.e(TAG, "bad userpasswordcredentials", e);
+			return null;
+		}
+		// create a basic credentials provider and pass the credentials
+		BasicCredentialsProvider credProvider = new BasicCredentialsProvider();
+		credProvider.setCredentials(AuthScope.ANY, upc);
+		// set credentials provider for our default http client so it will use those
+		// credentials
+		DefaultHttpClient client = new DefaultHttpClient();
+		client.setCredentialsProvider(credProvider);
+		return client;
 	}
 	
 	// Get Data from instapaper for Authenticate
-	public void getDataFromURLForcingBasicAuth()
+	public void getDataFromURLForcingBasicAuth(Context context)
 	{
 		if (!isInstapaperReady())
 			return;
-		HttpGet httpGet = new HttpGet("https://www.instapaper.com/api/authenticate");
-		httpGet.addHeader("Authorization", "basic " + Base64.encode(getBytesFromUserAndPass(), Base64.DEFAULT));
+		
+		final DefaultHttpClient httpClient = createCredentials();
+		if (httpClient == null)
+			return;
+		
+		final HttpGet getRequest = new HttpGet("https://www.instapaper.com/api/authenticate");
 		try {
-			final HttpResponse httpResponse = httpClient.execute(httpGet);
-			getStatusCode(httpResponse);
+			HttpResponse httpResponse = httpClient.execute(getRequest);
+			getHTTPResources(httpResponse, context);
 		} catch (Exception e) {
-			e.printStackTrace();
+			getRequest.abort();
+			Log.e(TAG, "bad httpResponse for get Data", e);
+		} finally {
+			// shut down the connection manager
+			httpClient.getConnectionManager().shutdown();
 		}
 	}
 	
 	// post data to instapaper with url and title
-	public void postDataURLForcingBasicAuth(News news)
+	public void postDataURLForcingBasicAuth(News news, Context context)
 	{
 		if (!isInstapaperReady())
 			return;
-		HttpPost httpPost = new HttpPost("https://www.instapaper.com/api/add");
-		httpPost.addHeader("Authorization", "basic " + Base64.encode(getBytesFromUserAndPass(), Base64.DEFAULT));
+		
+		final DefaultHttpClient httpClient = createCredentials();
+		if (httpClient == null)
+			return;
+		
+		final HttpPost httpPost = new HttpPost("https://www.instapaper.com/api/add");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		nameValuePairs.add(new BasicNameValuePair("url", news.getLink()));
 		nameValuePairs.add(new BasicNameValuePair("title", news.getTitle()));
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			
-			final HttpResponse httpResponse = httpClient.execute(httpPost);
-			getStatusCode(httpResponse);
+			HttpResponse httpResponse = httpClient.execute(httpPost);
+			getHTTPResources(httpResponse, context);
 		} catch (Exception e) {
-			e.printStackTrace();
+			httpPost.abort();
+			Log.e(TAG, "bad httpResponse for post Data", e);
+		} finally {
+			// shut down the connection manager
+			httpClient.getConnectionManager().shutdown();
 		}
 	}
 	
-	// get status code from HttpResponse
-	private void getStatusCode(HttpResponse response)
+	private void getHTTPResources(HttpResponse response, Context context) throws Exception
 	{
 		final String message;
 		switch(response.getStatusLine().getStatusCode()) {
@@ -105,10 +150,11 @@ public final class InstapaperRequest
 			default: message = "OK"; break;
 		}
 		
-		AlertDialog.Builder ad = new AlertDialog.Builder(context);
-		ad.setTitle("Instapaper Results");
-		ad.setMessage(message);
-		ad.setPositiveButton("OK", null);
-		ad.show();
+		Utilities.showAlertDialog(context, "Instapaper Results", message);
+		
+		// release all allocated resources if it is not null
+		HttpEntity entity = response.getEntity();
+		if (entity != null)
+			entity.consumeContent();
 	}
 }

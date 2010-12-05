@@ -11,22 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.itnoles.shared;
+package com.itnoles.knightfootball;
 
-import android.app.Activity;
-import android.view.View;
-import android.os.Bundle;
+import com.itnoles.shared.activity.AbstractScheduleActivity;
 
-public class StadiumActivity extends Activity
+public class KnightScheduleActivity extends AbstractScheduleActivity
 {
-	@Override
-	// Called when the activity is first created.
-	public void onCreate(Bundle savedInstanceState)
+	public KnightScheduleActivity()
 	{
-		super.onCreate(savedInstanceState);
-		
-		View view = new View(this);
-		view.setBackgroundResource(R.drawable.stadiumseating);
-		setContentView(view);
+		super("http://jonathan.theoks.net/appstuff/knights_schedule.json");
 	}
 }

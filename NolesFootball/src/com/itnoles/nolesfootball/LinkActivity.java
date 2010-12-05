@@ -17,7 +17,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.net.Uri;
-import android.widget.*;
+import android.widget.*; //ListView and ArrayAdapter
 import android.view.View;
 
 public class LinkActivity extends ListActivity {

@@ -13,13 +13,14 @@
 // limitations under the License.
 package com.itnoles.nolesfootball;
 
-import com.itnoles.shared.Utilities;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
+
+import com.itnoles.shared.Utilities;
+import com.itnoles.shared.activity.HeadlinesActivity;
 
 public class NolesFootball extends TabActivity
 {
@@ -29,27 +30,27 @@ public class NolesFootball extends TabActivity
 	{
 		super.onCreate(savedInstanceState);
 		
-		Resources res = getResources(); // Resource object to get Drawables
-		TabHost tabHost = getTabHost();  // The activity TabHost
-		TabHost.TabSpec spec;  // Resusable TabSpec for each tab
-		Intent intent;  // Reusable Intent for each tab
-		
 		if (!Utilities.NetworkCheck(this)) {
-			Utilities.showToast(this,"Sorry, NolesFootball needs to be connected to the internet. Please try again when you have better coverage");
+			Utilities.showAlertDialog(this,"Internet Not Found", R.string.InternetNotFound);
 			return;
 		}
 		
+		Resources res = getResources(); // Resource object to get Drawables
+		final TabHost tabHost = getTabHost();  // The activity TabHost
+		TabHost.TabSpec spec;  // Resusable TabSpec for each tab
+		Intent intent;  // Reusable Intent for each tab
+
 		// Create an Intent to launch an Activity for the tab (to be reused)
 		intent = new Intent().setClass(this, HeadlinesActivity.class);
 		
 		// Initialize a TabSpec for each tab and add it to the TabHost
 		spec = tabHost.newTabSpec("headlines").setIndicator("Headlines",
-		                  res.getDrawable(R.drawable.openbook))
+		                  res.getDrawable(R.drawable.newspaper))
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
 		// Do the same for the other tabs
-		intent = new Intent().setClass(this, ScheduleActivity.class);
+		intent = new Intent().setClass(this, NolesScheduleActivity.class);
 		spec = tabHost.newTabSpec("schedule").setIndicator("Schedule",
 		                  res.getDrawable(R.drawable.calendar))
 		              .setContent(intent);
@@ -57,17 +58,17 @@ public class NolesFootball extends TabActivity
 		
 		intent = new Intent().setClass(this, LinkActivity.class);
 		spec = tabHost.newTabSpec("link").setIndicator("Link",
-		                  res.getDrawable(R.drawable.link))
+		                  res.getDrawable(R.drawable.bookmark))
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, StaffActivity.class);
+		intent = new Intent().setClass(this, NolesStaffActivity.class);
 		spec = tabHost.newTabSpec("staff").setIndicator("Staff",
 		                  res.getDrawable(R.drawable.star))
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, SettingsActivity.class);
+		intent = new Intent().setClass(this, NolesSettingsActivity.class);
 		spec = tabHost.newTabSpec("setting").setIndicator("Settings",
 		                  res.getDrawable(R.drawable.gear2))
 		              .setContent(intent);

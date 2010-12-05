@@ -13,13 +13,14 @@
 // limitations under the License.
 package com.itnoles.knightfootball;
 
-import com.itnoles.shared.*;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
+
+import com.itnoles.shared.Utilities;
+import com.itnoles.shared.activity.HeadlinesActivity;
 
 public class KnightFootball extends TabActivity
 {
@@ -29,13 +30,11 @@ public class KnightFootball extends TabActivity
     {
         super.onCreate(savedInstanceState);
 
-		if (!Utilities.NetworkCheck(this)) {
-			Utilities.showToast(this, "Sorry, KnightsFootball needs to be connected to the internet. Please try again when you have better coverage");
-			return;
-		}
-		
+		if (!Utilities.NetworkCheck(this))
+			Utilities.showAlertDialog(this,"Internet Not Found", R.string.InternetNotFound);
+
 		Resources res = getResources(); // Resource object to get Drawables
-		TabHost tabHost = getTabHost();  // The activity TabHost
+		final TabHost tabHost = getTabHost();  // The activity TabHost
 		TabHost.TabSpec spec;  // Resusable TabSpec for each tab
 		Intent intent;  // Reusable Intent for each tab
 		
@@ -44,12 +43,12 @@ public class KnightFootball extends TabActivity
 		
 		// Initialize a TabSpec for each tab and add it to the TabHost
 		spec = tabHost.newTabSpec("headlines").setIndicator("Headlines",
-		                  res.getDrawable(R.drawable.openbook))
+		                  res.getDrawable(R.drawable.newspaper))
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
 		// Do the same for the other tabs
-		intent = new Intent().setClass(this, ScheduleActivity.class);
+		intent = new Intent().setClass(this, KnightScheduleActivity.class);
 		spec = tabHost.newTabSpec("schedule").setIndicator("Schedule",
 		                  res.getDrawable(R.drawable.calendar))
 		              .setContent(intent);
@@ -57,20 +56,20 @@ public class KnightFootball extends TabActivity
 		
 		intent = new Intent().setClass(this, LinkActivity.class);
 		spec = tabHost.newTabSpec("link").setIndicator("Link",
-		                  res.getDrawable(R.drawable.link))
+		                  res.getDrawable(R.drawable.bookmark))
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, StaffActivity.class);
+		intent = new Intent().setClass(this, KnightStaffActivity.class);
 		spec = tabHost.newTabSpec("staff").setIndicator("Staff",
 		                  res.getDrawable(R.drawable.star))
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, SettingsActivity.class);
+		intent = new Intent().setClass(this, KnightSettingsActivity.class);
 		spec = tabHost.newTabSpec("setting").setIndicator("Settings",
 		                  res.getDrawable(R.drawable.gear2))
 		              .setContent(intent);
 		tabHost.addTab(spec);
-    }
+	}
 }

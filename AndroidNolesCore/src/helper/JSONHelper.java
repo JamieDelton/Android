@@ -13,44 +13,48 @@
 // limitations under the License.
 package com.itnoles.shared.helper;
 
-import java.io.*;
-import org.json.*;
+import org.apache.http.HttpEntity;
+import org.json.JSONArray;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import android.util.Log;
+
+import java.io.InputStream;
+
+import com.itnoles.shared.HttpUtils;
 
 /**
  * JSONHelper
- * class that get and parse JSON data
+ * class that download and parse JSON data
  * @author Jonathan Steele
  */
 
-public final class JSONHelper
+public class JSONHelper
 {
+	private static final String TAG = "JSONHelper";
+	
 	public static JSONArray getJSONArray(String urlString)
 	{
 		JSONArray json = null;
 		try {
-			DefaultHttpClient client = new DefaultHttpClient();
-			HttpGet request = new HttpGet(urlString);
-			HttpResponse response = client.execute(request);
-			BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 8);
-			StringBuffer sb = new StringBuffer("");
-			String line = "";
-			String NL = System.getProperty("line.separator");
-			while ((line = in.readLine()) != null) {
-				sb.append(line + NL);
+			final HttpEntity entity = HttpUtils.openConnection(urlString);
+			if (entity != null)
+			{
+				InputStream inputStream = null;
+				byte[] buffer = new byte[1024];
+				try {
+					inputStream = entity.getContent();
+					int bytesRead = 0;
+					while ((bytesRead = inputStream.read(buffer)) != -1) {
+						json = new JSONArray(new String(buffer, 0, bytesRead));
+					}
+				} finally {
+					if (inputStream != null)
+						inputStream.close();
+					entity.consumeContent();
+				}
 			}
-			in.close();
-			String jsonString = sb.toString();
-			try {
-				json = new JSONArray(jsonString);
-			} catch (JSONException e) {
-				 e.printStackTrace();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			Log.w(TAG, "bad json array", e);
 		}
 		return json;
 	}

@@ -8,6 +8,11 @@
 		android:entries="@array/listNames"
 		android:entryValues="@array/listValues" />
 	<CheckBoxPreference
+		android:title="@string/Twitter_enabled"
+		android:defaultValue="false"
+		android:summary="@string/Twitter_enabled_summary"
+		android:key="twitter_enabled" />
+	<CheckBoxPreference
 		android:title="@string/Instapaper_enabled_title"
 		android:defaultValue="false"
 		android:summary="@string/Instapaper_enabled_summary"

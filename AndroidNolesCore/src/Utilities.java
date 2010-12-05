@@ -13,16 +13,15 @@
 // limitations under the License.
 package com.itnoles.shared;
 
-import android.content.Context;
-import android.net.*;
-import android.widget.Toast;
+import android.app.*; // AlertDialog and ProgressDialog
+import android.content.*; //Context and DialogInterface
+import android.net.*; // ConnectivityManager and NetworkInfo
 
 /**
  * Helper class
  * @author Jonathan Steele
  */
-
-public final class Utilities {
+public class Utilities {
 	/**
 	 * NetworkCheck
 	 * Checking to see Network is connected
@@ -31,30 +30,59 @@ public final class Utilities {
 	 */
 	public static Boolean NetworkCheck(Context context)
 	{
-		final ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final NetworkInfo info = cm.getActiveNetworkInfo();
+		ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = cm.getActiveNetworkInfo();
 		return (info != null) ? (info.getState() == NetworkInfo.State.CONNECTED) : false;
 	}
 	
 	/**
-	 * showToast 
-	 * it is showing Toast notification with a long peroid of time
+	 * show a new alert dialog
 	 * @param context Activity's Context
-	 * @param message string that show up in the box
+	 * @param title alert dialog for title
+	 * @param message alert dialog for message
 	 */
-	public static void showToast(Context context, String message)
+	public static void showAlertDialog(Context context, String title, String message)
 	{
-		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+		alertDialog.setTitle(title);
+		alertDialog.setMessage(message);
+		alertDialog.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				return;
+			}
+		});
+		alertDialog.show();
 	}
 	
 	/**
-	 * showToast 
-	 * it is showing Toast notification with a long peroid of time
+	 * show a new alert dialog
 	 * @param context Activity's Context
-	 * @param message resources string that show up in the box
+	 * @param title alert dialog for title
+	 * @param message Resource ID for alert dialog message
 	 */
-	public static void showToast(Context context, int message)
+	
+	public static void showAlertDialog(Context context, String title, int message)
 	{
-		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+		alertDialog.setTitle(title);
+		alertDialog.setMessage(message);
+		alertDialog.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				return;
+			}
+		});
+		alertDialog.show();
+	}
+	
+	/**
+	 * show a new progress dialog
+	 * 
+	 * @param activity Get a specific Activity
+	 * @param title progress dialog for title
+	 * @param message progress dialog for message
+	 */
+	public static ProgressDialog showProgressDialog(Context context, String message)
+	{
+		return ProgressDialog.show(context, "", message, true);
 	}
 }

@@ -1,9 +1,10 @@
 <resources>
-	<string name="ReadingRSS">Reading RSS, Please wait.</string>
 	<string name="OK">OK</string>
+	<string name="Twitter_enabled">Enable Twitter</string>
+	<string name="Twitter_enabled_summary">Disable or Enable Twitter access</string>
 	<string name="Instapaper">Instapaper</string>
 	<string name="Instapaper_result">Instapaper Result</string>
-	<string name="Instapaper_enabled_title">Instapaper Enabled</string>
+	<string name="Instapaper_enabled_title">Enable Instapaper</string>
 	<string name="Instapaper_enabled_summary">Disable or Enable Instapaper access</string>
 	<string name="Instapaper_username_title">Username</string>
 	<string name="Instapaper_username_summary">your Instapaper username</string>

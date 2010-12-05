@@ -22,7 +22,7 @@ import android.view.View;
 
 public class LinkActivity extends ListActivity {
 	private static final String[] LINK = new String[] {
-		"Tickets", "UCF Gameday", "UCFAlumni.com", "Alumni Tracker", "Golden Knights Club", "Radio Network"
+		"Tickets", "UCF Gameday", "UCFAlumni.com", "Alumni Tracker", "Golden Knights Club", "Radio Network", "UCF Photos"
 	};
 
 	@Override
@@ -36,20 +36,18 @@ public class LinkActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 
 		final String url;
-		if (position == 0) {
-			url = "http://ucfathletics.cstv.com/tickets/ucf-tickets.html";
-		} else if (position == 1) {
-			url = "http://ucfathletics.cstv.com/brighthouse/";
-		} else if (position == 2) {
-			url = "http://www.ucfalumni.com/";
-		} else if (position == 3) {
-			url = "http://cbs.sportsline.com/collegefootball/alumni-tracker/school/5233";
-		} else if (position == 4) {
-			url = "http://www.ucfathleticfund.com/";
-		} else {
-			url = "http://ucfathletics.cstv.com/multimedia/ucf-isp-radio-network.html";
+		switch (position) {
+			case 0: url = "http://ucfathletics.cstv.com/tickets/ucf-tickets.html"; break;
+			case 1: url = "http://ucfathletics.cstv.com/brighthouse/"; break;
+			case 2: url = "http://www.ucfalumni.com/"; break;
+			case 3: url = "http://cbs.sportsline.com/collegefootball/alumni-tracker/school/5233"; break;
+			case 4: url = "http://www.ucfathleticfund.com/"; break;
+			case 5: url = "http://ucfathletics.cstv.com/multimedia/ucf-isp-radio-network.html"; break;
+			case 6:
+			default: url = "http://ucfphotos.photoshelter.com/gallery-list"; break;
 		}
-        /* Take string from url and parse it to the default browsers */
+		
+		// Take string from url and parse it to the default browsers
 		final Intent viewIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		startActivity(viewIntent);
 	}

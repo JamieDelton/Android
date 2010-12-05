@@ -72,7 +72,7 @@
 	<property name="unoptimized" value="${proguard-dir}/unoptimized.jar"/>
 	<property name="optimized" value="${proguard-dir}/optimized.jar"/>
 	
-	<target name="optimize" unless="nooptimize">
+	<target name="optimize" unless="noproguard">
 		<jar basedir="${out.classes.dir}" destfile="${unoptimized}"/>
 		
 		<java jar="${proguard-dir}/proguard.jar" fork="true" failonerror="true">

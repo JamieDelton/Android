@@ -13,14 +13,17 @@
 // limitations under the License.
 package com.itnoles.shared.helper;
 
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import android.util.Log;
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import java.io.BufferedInputStream;
+import java.net.*; //URL and HttpURLConnection
+import java.text.*; //SimpleDateFormat and ParseException
+import java.util.*; //ArrayList and List
 
 import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.*; // Attributes, SAXException, XMLReader and InputSource
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.itnoles.shared.News;
 
@@ -30,25 +33,31 @@ import com.itnoles.shared.News;
  * @author Jonathan Steele
  */
 
-public final class FeedParser
+public class FeedParser
 {
+	private static final String TAG = "FeedParser";
+
 	public static List<News> parse(String urlString)
 	{
+		RssHandler handler = new RssHandler();
 		try {
 			// Get a SAXParser from the SAXPArserFactory.
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			// Get a XMLParser from the SAXParser
 			XMLReader xr = factory.newSAXParser().getXMLReader();
-			RssHandler handler = new RssHandler();
 			xr.setContentHandler(handler);
 			// Parse the xml-data from our URL.
-			xr.parse(new InputSource(new URL(urlString).openConnection().getInputStream()));
-			// Parsing has finished.
-			// Our handler now provides the parsed data to us.
-			return handler.getMessages();
+			HttpURLConnection urlConnection = (HttpURLConnection) new URL(urlString).openConnection();
+			BufferedInputStream ios = new BufferedInputStream(urlConnection.getInputStream(), 8);
+			xr.parse(new InputSource(ios));
+			ios.close();
+			urlConnection.disconnect();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			Log.e(TAG, "bad feed parsing", e);
 		}
+		// Parsing has finished.
+		// Our handler now provides the parsed data to us.
+		return handler.getMessages();
 	}
 	
 	private static class RssHandler extends DefaultHandler {
@@ -66,9 +75,9 @@ public final class FeedParser
 		// Common Atom Format
 		protected static final SimpleDateFormat ISO8601_DATE_FORMATS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-		private final List<News> messages = new ArrayList<News>();
-		private News currentMessage = null;
-		private StringBuilder builder = null;
+		private static final List<News> messages = new ArrayList<News>();
+		private News currentMessage;
+		private StringBuilder builder;
 		private String mHrefAttribute; // href attribute from link element in Atom format
 	
 		public List<News> getMessages()
@@ -83,7 +92,10 @@ public final class FeedParser
 			builder = new StringBuilder();
 			if (localName.equalsIgnoreCase(ITEM) || localName.equalsIgnoreCase(ENTRY))
 				currentMessage = new News();
-			else if (localName.equalsIgnoreCase("link")) {
+			else if (localName.equalsIgnoreCase("enclosure")) {
+				if (attributes != null)
+					currentMessage.setImageURL(attributes.getValue("url"));
+			} else if (localName.equalsIgnoreCase("link")) {
 				// Get href attribute from link element for Atom format
 				if (attributes != null)
 					mHrefAttribute = attributes.getValue("href");
@@ -128,7 +140,7 @@ public final class FeedParser
 			try {
 				currentMessage.setPubdate(sdf.parse(builder.toString().trim()).toString());
 			} catch (ParseException e) {
-				throw new RuntimeException(e);
+				Log.e(TAG, "bad date format", e);
 			}
 		}
 	}

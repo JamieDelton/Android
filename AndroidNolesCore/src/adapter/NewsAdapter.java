@@ -11,15 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package com.itnoles.shared.helper;
+package com.itnoles.shared.adapter;
+
+import android.content.Context;
+import android.view.*; //View and ViewGroup
+import android.widget.*;
 
 import java.util.List;
 
-import com.itnoles.shared.News;
-
-import android.content.Context;
-import android.view.*;
-import android.widget.*;
+import com.itnoles.shared.*; //ImageDownloader, HttpUtils, News and Utilities
 
 /**
  * NewsAdapter
@@ -28,11 +28,12 @@ import android.widget.*;
  */
 
 public class NewsAdapter extends ArrayAdapter<News> {
-	private List<News> items;
+	private final List<News> items;
+	private static final int resourceID = R.layout.icon_detail_list_item;
 	
 	// Constructor
 	public NewsAdapter(Context context, List<News> items) {
-		super(context, android.R.layout.simple_list_item_2, items);
+		super(context, resourceID, items);
 		this.items = items;
 	}
 	
@@ -41,19 +42,22 @@ public class NewsAdapter extends ArrayAdapter<News> {
 		View v = convertView;
 		if (v == null) {
 			LayoutInflater vi = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(android.R.layout.simple_list_item_2, null);
+			v = vi.inflate(resourceID, null);
 		}
 		
 		News news = items.get(position);
 		if (news != null) {
-			TextView title = (TextView) v.findViewById(android.R.id.text1);
-			if (title != null) {
+			ImageView thumbnail = (ImageView) v.findViewById(R.id.icon);
+			if (thumbnail != null) {
+				ImageDownloader downloader = new ImageDownloader();
+				downloader.download(news.getImageURL(), thumbnail);
+			}
+			TextView title = (TextView) v.findViewById(R.id.text1);
+			if (title != null)
 				title.setText(news.getTitle());
-			}
-			TextView subtitle = (TextView) v.findViewById(android.R.id.text2);
-			if (subtitle != null) {
+			TextView subtitle = (TextView) v.findViewById(R.id.text2);
+			if (subtitle != null)
 				subtitle.setText(news.getPubdate());
-			}
 		}
 		return v;
 	}

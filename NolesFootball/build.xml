@@ -47,6 +47,10 @@
     <taskdef name="setup"
         classname="com.android.ant.SetupTask"
         classpathref="android.antlibs" />
+	
+	<target name="-post-compile">
+		<antcall target="optimize" />
+	</target>
 
     <!-- Execute the Android Setup task that will setup some properties specific to the target,
          and import the build rules files.
@@ -71,10 +75,8 @@
 	<property name="proguard-dir" value="proguard"/>
 	<property name="unoptimized" value="${proguard-dir}/unoptimized.jar"/>
 	<property name="optimized" value="${proguard-dir}/optimized.jar"/>
-	
-	<target name="optimize" unless="nooptimize">
+	<target name="optimize" unless="noproguard">
 		<jar basedir="${out.classes.dir}" destfile="${unoptimized}"/>
-		
 		<java jar="${proguard-dir}/proguard.jar" fork="true" failonerror="true">
 			<jvmarg value="-Dmaximum.inlined.code.length=16"/>
 			<arg value="@${proguard-dir}/config.txt"/>      
@@ -95,10 +97,5 @@
 		
 		<!-- Delete optimized jar (now unzipped into bin directory) -->
 		<delete file="optimized.jar"/>
-	</target>
-
-	<!-- Converts this project's .class files into .dex files -->
-	<target name="-dex" depends="compile,optimize">
-		<dex-helper />
 	</target>
 </project>
