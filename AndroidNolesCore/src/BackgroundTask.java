@@ -25,7 +25,7 @@ import com.itnoles.shared.helper.AsyncTaskCompleteListener;
 
 public class BackgroundTask extends AsyncTask<Void, Void, Void> {
 	private AsyncTaskCompleteListener callback;
-
+	
 	// Constructor
 	public BackgroundTask(AsyncTaskCompleteListener cb) {
 		this.callback = cb;
@@ -39,7 +39,7 @@ public class BackgroundTask extends AsyncTask<Void, Void, Void> {
 	
 	// perform a computation on a background thread
 	@Override
-	protected Void doInBackground(Void... arg0) {
+	protected Void doInBackground(Void ...params) {
 		callback.readData();
 		return null;
 	}

@@ -19,14 +19,12 @@ import android.os.Bundle;
 import android.view.*; // Menu, MenuItem and View
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
-import android.util.Log;
 
-import com.itnoles.shared.*; //BackgroundTask, HttpUtils, News, InstapaperRequest and Utilities
+import com.itnoles.shared.*; //BackgroundTask, News, InstapaperRequest and Utilities
 import com.itnoles.shared.adapter.*; //SeparatedListAdapter and NewsAdapter
 import com.itnoles.shared.helper.AsyncTaskCompleteListener;
 
-public class HeadlinesActivity extends ListActivity implements AsyncTaskCompleteListener {
-	private static final String TAG = "HeadlinesActivity";
+public abstract class AbstractHeadlinesActivity extends ListActivity implements AsyncTaskCompleteListener {
 	private SharedPreferences mPrefs;
 	private SeparatedListAdapter mAdapter;
 	private ProgressDialog pd;
@@ -56,13 +54,6 @@ public class HeadlinesActivity extends ListActivity implements AsyncTaskComplete
 		news.clear();
 	}
 	
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		HttpUtils.closeConnection();
-	}
-	
 	// Display Data to ListView
 	public void onTaskComplete()
 	{
@@ -90,27 +81,20 @@ public class HeadlinesActivity extends ListActivity implements AsyncTaskComplete
 		menu.setHeaderTitle("Select Options");
 		menu.add(Menu.NONE, 0, Menu.NONE, "Send to Instapaper");
 		menu.add(Menu.NONE, 1, Menu.NONE, "Open In WebView");
-		//menu.add(Menu.NONE, 2, Menu.NONE, "Send to Twitter");
+		menu.add(Menu.NONE, 2, Menu.NONE, "Send to Twitter");
 	}
-	
+
 	// When the users selected the item id in the context menu, it called specific item action.
 	@Override
 	public boolean onContextItemSelected(MenuItem item)
 	{
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		} catch (ClassCastException e) {
-			Log.e(TAG, "bad menuInfo", e);
-			return false;
-		}
-		
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		News newsList = (News) getListAdapter().getItem(info.position);
 		switch(item.getItemId()) {
 			case 0:
 				// Launch the instapaper request to post data
 				InstapaperRequest request = new InstapaperRequest(mPrefs);
-				request.postDataURLForcingBasicAuth(newsList, this);
+				request.sendData(this, "https://www.instapaper.com/api/add?url=" + newsList.getLink());
 				return true;
 			case 1:
 				// Launch Activity to view page load in webview
@@ -120,7 +104,9 @@ public class HeadlinesActivity extends ListActivity implements AsyncTaskComplete
 				startActivity(displayWebView);
 				return true;
 			default:
-				return super.onContextItemSelected(item);
+				return extraMenuInfo(item);
 		}
 	}
+	
+	abstract public boolean extraMenuInfo(MenuItem item);
 }

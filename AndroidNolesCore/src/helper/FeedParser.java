@@ -69,9 +69,6 @@ public class FeedParser
 		private static final String ENTRY = "entry";
 		private static final String PUBLISHED = "published";
 		
-		// RSS Format
-		protected static final SimpleDateFormat RFC822_DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
-
 		// Common Atom Format
 		protected static final SimpleDateFormat ISO8601_DATE_FORMATS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
@@ -117,7 +114,7 @@ public class FeedParser
 						currentMessage.setLink(builder.toString().trim());
 				}
 				else if (localName.equalsIgnoreCase(PUB_DATE))
-					setDate(RFC822_DATE_FORMAT);
+					currentMessage.setPubdate(builder.toString().trim());
 				else if (localName.equalsIgnoreCase(PUBLISHED))
 					setDate(ISO8601_DATE_FORMATS);
 				else if (localName.equalsIgnoreCase(ITEM) || localName.equalsIgnoreCase(ENTRY))

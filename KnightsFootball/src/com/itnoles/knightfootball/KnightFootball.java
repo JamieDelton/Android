@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.widget.TabHost;
 
 import com.itnoles.shared.Utilities;
-import com.itnoles.shared.activity.HeadlinesActivity;
 
 public class KnightFootball extends TabActivity
 {
@@ -39,11 +38,11 @@ public class KnightFootball extends TabActivity
 		Intent intent;  // Reusable Intent for each tab
 		
 		// Create an Intent to launch an Activity for the tab (to be reused)
-		intent = new Intent().setClass(this, HeadlinesActivity.class);
+		intent = new Intent().setClass(this, KnightHeadlinesActivity.class);
 		
 		// Initialize a TabSpec for each tab and add it to the TabHost
 		spec = tabHost.newTabSpec("headlines").setIndicator("Headlines",
-		                  res.getDrawable(R.drawable.newspaper))
+		                  res.getDrawable(R.drawable.notepad))
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		

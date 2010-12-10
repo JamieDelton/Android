@@ -15,11 +15,11 @@ package com.itnoles.shared.adapter;
 
 import android.content.Context;
 import android.view.*; //View and ViewGroup
-import android.widget.*;
+import android.widget.*; // ArrayAdapter, ImageView and TextView
 
 import java.util.List;
 
-import com.itnoles.shared.*; //ImageDownloader, HttpUtils, News and Utilities
+import com.itnoles.shared.*; //ImageDownloader and News
 
 /**
  * NewsAdapter

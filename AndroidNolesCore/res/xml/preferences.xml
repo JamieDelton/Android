@@ -12,28 +12,29 @@
 		android:defaultValue="false"
 		android:summary="@string/Twitter_enabled_summary"
 		android:key="twitter_enabled" />
-	<CheckBoxPreference
-		android:title="@string/Instapaper_enabled_title"
-		android:defaultValue="false"
-		android:summary="@string/Instapaper_enabled_summary"
-		android:key="instapaper_enabled" />
-	<PreferenceCategory
-		android:title="@string/Instapaper">
-	<EditTextPreference
-		android:title="@string/Instapaper_username_title"
-		android:summary="@string/Instapaper_username_summary"
-		android:key="instapaper_username"
-		android:dialogTitle="@string/Instapaper_username_title"
-		android:singleLine="true"
-		android:dependency="instapaper_enabled" />
-	<EditTextPreference
-		android:title="@string/Instapaper_password_title"
-		android:summary="@string/Instapaper_password_summary"
-		android:key="instapaper_password"
-		android:dialogTitle="@string/Instapaper_password_title"
-		android:singleLine="true"
-		android:inputType="textPassword"
-		android:password="true"
-		android:dependency="instapaper_enabled" />
-	</PreferenceCategory>
+	<PreferenceScreen
+		android:key="instapaperPrefScreen"
+		android:title="Instapaper">
+		<CheckBoxPreference
+			android:title="@string/Instapaper_enabled_title"
+			android:defaultValue="false"
+			android:summary="@string/Instapaper_enabled_summary"
+			android:key="instapaper_enabled" />
+		<EditTextPreference
+			android:title="@string/Instapaper_username_title"
+			android:summary="@string/Instapaper_username_summary"
+			android:key="instapaper_username"
+			android:dialogTitle="@string/Instapaper_username_title"
+			android:singleLine="true"
+			android:dependency="instapaper_enabled" />
+		<EditTextPreference
+			android:title="@string/Instapaper_password_title"
+			android:summary="@string/Instapaper_password_summary"
+			android:key="instapaper_password"
+			android:dialogTitle="@string/Instapaper_password_title"
+			android:singleLine="true"
+			android:inputType="textPassword"
+			android:password="true"
+			android:dependency="instapaper_enabled" />
+	</PreferenceScreen>
 </PreferenceScreen>

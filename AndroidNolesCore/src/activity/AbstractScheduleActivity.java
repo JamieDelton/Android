@@ -25,7 +25,7 @@ import android.util.Log;
 import java.util.*; //List and ArrayList
 import org.json.*; //JSONArray and JSONObject
 
-import com.itnoles.shared.helper.AsyncTaskCompleteListener;
+import com.itnoles.shared.helper.*; // AsyncTaskCompleteListener and JSONHelper
 
 public abstract class AbstractScheduleActivity extends ListActivity implements AsyncTaskCompleteListener
 {
@@ -55,12 +55,6 @@ public abstract class AbstractScheduleActivity extends ListActivity implements A
 		new com.itnoles.shared.BackgroundTask(this).execute();
 	}
 	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		com.itnoles.shared.HttpUtils.closeConnection();
-	}
-	
 	// Display Data to ListView
 	public void onTaskComplete()
 	{
@@ -85,6 +79,6 @@ public abstract class AbstractScheduleActivity extends ListActivity implements A
 	// Do This stuff in Background
 	public void readData()
 	{
-		json = com.itnoles.shared.helper.JSONHelper.getJSONArray(url);
+		json = JSONHelper.getJSONArray(url);
 	}
 }

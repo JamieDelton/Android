@@ -13,7 +13,7 @@
 				<data android:scheme="knightsfb" android:host="statusnet"></data>
 			</intent-filter>
 		</activity>
-		<activity android:name="com.itnoles.shared.activity.HeadlinesActivity" />
+		<activity android:name="KnightHeadlinesActivity" />
 		<activity android:name="KnightScheduleActivity" />
 		<activity android:name="LinkActivity" />
 		<activity android:name="KnightStaffActivity" />

@@ -13,36 +13,26 @@
 // limitations under the License.
 package com.itnoles.shared;
 
-import org.apache.http.*; //HttpEntity, HttpResponse and HttpStatus
+import org.apache.http.*; //HttpEntity, HttpResponse, HttpStatus
 import org.apache.http.client.methods.HttpGet;
 
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
+import java.io.IOException;
+
 public class HttpUtils {
 	private static final String TAG = "HttpUtils";
-	// AndroidHttpClient is not allowed to be used from the main thread
-	private static final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-	
-	public static HttpEntity openConnection(String url)
+
+	public static HttpEntity openConnection(AndroidHttpClient client, String urlString) throws IOException
 	{
-		final HttpGet getRequest = new HttpGet(url);
-		try {
-			HttpResponse response = client.execute(getRequest);
-			final int statusCode = response.getStatusLine().getStatusCode();
-			if (statusCode != HttpStatus.SC_OK) {
-				Log.w(TAG, "Error " + statusCode + " while retrieving data from " + url);
-				return null;
-			}
-			return response.getEntity();
-		} catch (Exception e) {
-			getRequest.abort();
-			Log.w(TAG, "Error while retrieving data from " + url, e);
+		final HttpGet getRequest = new HttpGet(urlString);
+		HttpResponse response = client.execute(getRequest);
+		final int statusCode = response.getStatusLine().getStatusCode();
+		if (statusCode != HttpStatus.SC_OK) {
+			Log.w(TAG, "Error " + statusCode + " while retrieving data from " + urlString);
+			return null;
 		}
-		return null;
-	}
-	
-	public static void closeConnection() {
-		client.close();
+		return response.getEntity();
 	}
 }

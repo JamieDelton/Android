@@ -16,6 +16,7 @@ package com.itnoles.shared.helper;
 import org.apache.http.HttpEntity;
 import org.json.JSONArray;
 
+import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
 import java.io.InputStream;
@@ -35,10 +36,11 @@ public class JSONHelper
 	public static JSONArray getJSONArray(String urlString)
 	{
 		JSONArray json = null;
+		// AndroidHttpClient is not allowed to be used from the main thread
+		final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
 		try {
-			final HttpEntity entity = HttpUtils.openConnection(urlString);
-			if (entity != null)
-			{
+			final HttpEntity entity = HttpUtils.openConnection(client, urlString);
+			if (entity != null) {
 				InputStream inputStream = null;
 				byte[] buffer = new byte[1024];
 				try {
@@ -55,6 +57,8 @@ public class JSONHelper
 			}
 		} catch (Exception e) {
 			Log.w(TAG, "bad json array", e);
+		} finally {
+			client.close();
 		}
 		return json;
 	}

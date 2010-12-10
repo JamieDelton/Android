@@ -19,10 +19,11 @@ import org.apache.http.HttpEntity;
 
 import android.graphics.*; //Bitmap and BitmapFactory
 import android.os.*; //AsyncTask and Handler
+import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.*; //FilterInputStream, InputStream and IOException
+import java.io.*; //FilterInputStream and InputStream
 import java.lang.ref.*; //SoftReference and WeakReference
 import java.util.*; //HashMap and LinkedHashMap
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,8 +73,10 @@ public class ImageDownloader {
 	}
 	
 	Bitmap downloadBitmap(String url) {
+		// AndroidHttpClient is not allowed to be used from the main thread
+		final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
 		try {
-			final HttpEntity entity = HttpUtils.openConnection(url);
+			final HttpEntity entity = HttpUtils.openConnection(client, url);
 			if (entity != null) {
 				InputStream inputStream = null;
 				try {
@@ -87,12 +90,14 @@ public class ImageDownloader {
 					entity.consumeContent();
 				}
 			}
-		} catch(IOException e) {
-			Log.w(TAG, "I/O error while retrieving bitmap from " + url, e);
+		} catch (Exception e) {
+			Log.w(TAG, "Error while retrieving bitmap from " + url, e);
+		} finally {
+			client.close();
 		}
 		return null;
 	}
-	
+
 	/*
 	 * An InputStream that skips the exact number of bytes provided, unless it reaches EOF.
 	 */
