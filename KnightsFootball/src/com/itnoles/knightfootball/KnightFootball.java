@@ -20,25 +20,22 @@ import android.os.Bundle;
 import android.widget.TabHost;
 
 import com.itnoles.shared.Utilities;
-
+import com.itnoles.shared.activity.*; // HeadlinesActivity and SettingsActivity
 public class KnightFootball extends TabActivity
 {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-
-		if (!Utilities.NetworkCheck(this))
-			Utilities.showAlertDialog(this,"Internet Not Found", R.string.InternetNotFound);
-
-		Resources res = getResources(); // Resource object to get Drawables
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		
+		Resources res = getResources(); // get Resources Class
 		final TabHost tabHost = getTabHost();  // The activity TabHost
 		TabHost.TabSpec spec;  // Resusable TabSpec for each tab
 		Intent intent;  // Reusable Intent for each tab
 		
 		// Create an Intent to launch an Activity for the tab (to be reused)
-		intent = new Intent().setClass(this, KnightHeadlinesActivity.class);
+		intent = new Intent().setClass(this, HeadlinesActivity.class);
 		
 		// Initialize a TabSpec for each tab and add it to the TabHost
 		spec = tabHost.newTabSpec("headlines").setIndicator("Headlines",
@@ -65,7 +62,7 @@ public class KnightFootball extends TabActivity
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, KnightSettingsActivity.class);
+		intent = new Intent().setClass(this, SettingsActivity.class);
 		spec = tabHost.newTabSpec("setting").setIndicator("Settings",
 		                  res.getDrawable(R.drawable.gear2))
 		              .setContent(intent);

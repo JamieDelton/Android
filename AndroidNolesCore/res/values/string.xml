@@ -1,13 +1,16 @@
 <resources>
-	<string name="OK">OK</string>
-	<string name="Twitter_enabled">Enable Twitter</string>
-	<string name="Twitter_enabled_summary">Disable or Enable Twitter access</string>
 	<string name="Instapaper">Instapaper</string>
 	<string name="Instapaper_result">Instapaper Result</string>
 	<string name="Instapaper_enabled_title">Enable Instapaper</string>
 	<string name="Instapaper_enabled_summary">Disable or Enable Instapaper access</string>
-	<string name="Instapaper_username_title">Username</string>
+	<string name="username">Username</string>
 	<string name="Instapaper_username_summary">your Instapaper username</string>
-	<string name="Instapaper_password_title">Password</string>
-	<string name="Instapaper_password_summary">your instapaper password</string>
+	<string name="password">Password</string>
+	<string name="Instapaper_password_summary">your Instapaper password</string>
+	<string name="listPref_title">Headlines</string>
+	<string name="listPref_summary">change the news source</string>
+	<string name="listPref_dialogTitle">News Source</string>
+	<string name="Stadium">Stadium Seating</string>
+	<string name="share">Share...</string>
+	<string name="listview_empty">If you\'ve seen this message more than once, there is no data is available.</string>
 </resources>

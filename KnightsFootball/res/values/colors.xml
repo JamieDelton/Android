@@ -1,0 +1,4 @@
+<resources>
+    <color name="schedule_header_background">#CFB53B</color>
+    <color name="schedule_text_color">#000000</color>
+</resources>

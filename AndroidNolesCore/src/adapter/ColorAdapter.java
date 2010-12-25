@@ -19,7 +19,7 @@ import android.content.Context;
 import android.view.*; //View and ViewGroup
 import android.widget.SimpleAdapter;
 
-import java.util.*; //List and HashMap;
+import java.util.*; //List and HashMap
 
 public class ColorAdapter extends SimpleAdapter
 {

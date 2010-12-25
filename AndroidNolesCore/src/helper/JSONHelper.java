@@ -13,15 +13,13 @@
 // limitations under the License.
 package com.itnoles.shared.helper;
 
-import org.apache.http.HttpEntity;
 import org.json.JSONArray;
 
-import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
-import java.io.InputStream;
+import java.io.*; // IOException and InputStream
 
-import com.itnoles.shared.HttpUtils;
+import com.itnoles.shared.Utilities;
 
 /**
  * JSONHelper
@@ -36,29 +34,22 @@ public class JSONHelper
 	public static JSONArray getJSONArray(String urlString)
 	{
 		JSONArray json = null;
-		// AndroidHttpClient is not allowed to be used from the main thread
-		final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+		InputStream inputStream = null;
+		byte[] buffer = new byte[1024];
 		try {
-			final HttpEntity entity = HttpUtils.openConnection(client, urlString);
-			if (entity != null) {
-				InputStream inputStream = null;
-				byte[] buffer = new byte[1024];
-				try {
-					inputStream = entity.getContent();
-					int bytesRead = 0;
-					while ((bytesRead = inputStream.read(buffer)) != -1) {
-						json = new JSONArray(new String(buffer, 0, bytesRead));
-					}
-				} finally {
-					if (inputStream != null)
-						inputStream.close();
-					entity.consumeContent();
-				}
+			inputStream = Utilities.openStream(urlString);
+			int bytesRead = 0;
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				json = new JSONArray(new String(buffer, 0, bytesRead));
 			}
 		} catch (Exception e) {
 			Log.w(TAG, "bad json array", e);
 		} finally {
-			client.close();
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				Log.e(TAG, "can't close inputstream");
+			}
 		}
 		return json;
 	}

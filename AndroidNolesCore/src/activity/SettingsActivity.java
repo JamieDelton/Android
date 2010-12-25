@@ -17,27 +17,27 @@ import com.itnoles.shared.R;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.*; //Bundle and Build
-import android.preference.*; // ListPreference, CheckBoxPreference, EditTextPreference, PreferenceActivity, Preference
+import android.os.Bundle;
+//import android.net.Uri;
+import android.preference.*; // ListPreference, CheckBoxPreference, EditTextPreference, PreferenceActivity and Preference
 import android.view.Gravity;
 import android.widget.TextView;
 import android.util.Log;
 
-import com.itnoles.shared.InstapaperRequest;
+import com.itnoles.shared.*; //Constants, InstapaperRequest and Utilities
 import com.itnoles.shared.helper.SimpleCrypto;
 
-public abstract class AbstractSettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
+public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "AbstractSettingsActivity";
 	private static final String NEWS = "news";
-	private static final String TWITTER_ENABLED = "twitter_enabled";
 	SharedPreferences sharedPref;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
+		
 		// Load the XML preferences file
 		addPreferencesFromResource(R.xml.preferences);
 		
@@ -56,7 +56,6 @@ public abstract class AbstractSettingsActivity extends PreferenceActivity implem
 		super.onResume();
 		// Set up a listener whenever a key changes
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		onResumeWorker();
 	}
 	
 	@Override
@@ -68,8 +67,7 @@ public abstract class AbstractSettingsActivity extends PreferenceActivity implem
 	}
 	
 	private void commitChange(SharedPreferences.Editor editor) {
-		final int sdkVersion = Build.VERSION.SDK_INT;
-		if (sdkVersion >= Build.VERSION_CODES.GINGERBREAD)
+		if (Constants.ISORLATER_GINGERBREAD)
 			editor.apply();
 		else
 			editor.commit();
@@ -93,18 +91,10 @@ public abstract class AbstractSettingsActivity extends PreferenceActivity implem
 			}
 		}
 		
-		if (key.equals(TWITTER_ENABLED))
-		{
-			CheckBoxPreference twitterEnabledPref = (CheckBoxPreference)pref;
-			editor.putBoolean(TWITTER_ENABLED, twitterEnabledPref.isChecked());
-			commitChange(editor);
-			startTwitterRequestOnBrowser();
-		}
-		
 		if (key.equals(InstapaperRequest.INSTAPAPER_ENABLED))
 		{
 			CheckBoxPreference instapaperEnabledPref = (CheckBoxPreference)pref;
-			editor.putBoolean(InstapaperRequest.INSTAPAPER_ENABLED, instapaperEnabledPref.isChecked());
+			editor.putBoolean(key, instapaperEnabledPref.isChecked());
 			commitChange(editor);
 		}
 			
@@ -112,8 +102,8 @@ public abstract class AbstractSettingsActivity extends PreferenceActivity implem
 		{
 			try {
 				EditTextPreference usernameEditPref = (EditTextPreference)pref;
-				String encryptedString = SimpleCrypto.encrypt(InstapaperRequest.INSTAPAPER_USERNAME, usernameEditPref.getText());
-				editor.putString(InstapaperRequest.INSTAPAPER_USERNAME, encryptedString);
+				String encryptedString = SimpleCrypto.encrypt(key, usernameEditPref.getText());
+				editor.putString(key, encryptedString);
 				commitChange(editor);
 			} catch(Exception e) {
 				Log.e(TAG, "bad encrypted string for instapaper username", e);
@@ -124,18 +114,15 @@ public abstract class AbstractSettingsActivity extends PreferenceActivity implem
 		{
 			try {
 				EditTextPreference passwordEditPref = (EditTextPreference)pref;
-				String encryptedString = SimpleCrypto.encrypt(InstapaperRequest.INSTAPAPER_PASSWORD, passwordEditPref.getText());
-				editor.putString(InstapaperRequest.INSTAPAPER_PASSWORD, encryptedString);
+				String encryptedString = SimpleCrypto.encrypt(key, passwordEditPref.getText());
+				editor.putString(key, encryptedString);
 				commitChange(editor);
 				// start the auth request for instapaper
-				InstapaperRequest request = new InstapaperRequest(sharedPref);
-				request.sendData(this, "https://www.instapaper.com/api/authenticate");
+				InstapaperRequest request = new InstapaperRequest(this, sharedPref);
+				request.sendData("https://www.instapaper.com/api/authenticate");
 			} catch (Exception e) {
 				Log.e(TAG, "bad encrypted string for instapaper password", e);
 			}
 		}
 	}
-	
-	abstract public void onResumeWorker();
-	abstract public void startTwitterRequestOnBrowser();
 }

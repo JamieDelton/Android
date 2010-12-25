@@ -43,7 +43,6 @@ public class LinkActivity extends ListActivity {
 			case 3: url = "http://cbs.sportsline.com/collegefootball/alumni-tracker/school/5233"; break;
 			case 4: url = "http://www.ucfathleticfund.com/"; break;
 			case 5: url = "http://ucfathletics.cstv.com/multimedia/ucf-isp-radio-network.html"; break;
-			case 6:
 			default: url = "http://ucfphotos.photoshelter.com/gallery-list"; break;
 		}
 		

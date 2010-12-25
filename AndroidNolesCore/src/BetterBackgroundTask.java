@@ -15,7 +15,7 @@ package com.itnoles.shared;
 
 import android.os.AsyncTask;
 
-import com.itnoles.shared.helper.AsyncTaskCompleteListener;
+import com.itnoles.shared.helper.BetterAsyncTaskCompleteListener;
 
 /**
  * BackgroundTask
@@ -23,24 +23,23 @@ import com.itnoles.shared.helper.AsyncTaskCompleteListener;
  * @author Jonathan Steele
  */
 
-public class BackgroundTask extends AsyncTask<Void, Void, Void> {
-	private AsyncTaskCompleteListener callback;
+public class BetterBackgroundTask<T1, T2, T3> extends AsyncTask<T1, T2, T3> {
+	private BetterAsyncTaskCompleteListener<T1, T2, T3> callback;
 	
 	// Constructor
-	public BackgroundTask(AsyncTaskCompleteListener cb) {
-		this.callback = cb;
-	}
-	
-	// Runs on the UI thread after doInBackground
-	@Override
-	protected void onPostExecute(Void result) {
-		callback.onTaskComplete();
+	public BetterBackgroundTask(BetterAsyncTaskCompleteListener<T1, T2, T3> callback) {
+		this.callback = callback;
 	}
 	
 	// perform a computation on a background thread
 	@Override
-	protected Void doInBackground(Void ...params) {
-		callback.readData();
-		return null;
+	protected T3 doInBackground(T1... params) {
+		return callback.readData(params);
+	}
+	
+	// Runs on the UI thread after doInBackground
+	@Override
+	protected void onPostExecute(T3 result) {
+		callback.onTaskComplete(result);
 	}
 }

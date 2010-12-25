@@ -13,19 +13,18 @@
 // limitations under the License.
 package com.itnoles.shared.helper;
 
+import org.xml.sax.*; // Attributes, SAXException, XMLReader and InputSource
+import org.xml.sax.helpers.DefaultHandler;
+
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.net.*; //URL and HttpURLConnection
+import java.io.InputStream;
 import java.text.*; //SimpleDateFormat and ParseException
 import java.util.*; //ArrayList and List
 
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.*; // Attributes, SAXException, XMLReader and InputSource
-import org.xml.sax.helpers.DefaultHandler;
-
-import com.itnoles.shared.News;
+import com.itnoles.shared.*; // News and Utilities
 
 /**
  * FeedParser
@@ -40,20 +39,26 @@ public class FeedParser
 	public static List<News> parse(String urlString)
 	{
 		RssHandler handler = new RssHandler();
+		InputStream inputStream = null;
 		try {
 			// Get a SAXParser from the SAXPArserFactory.
 			SAXParserFactory factory = SAXParserFactory.newInstance();
-			// Get a XMLParser from the SAXParser
+
+			// Get XMLParser from the SAXParser
 			XMLReader xr = factory.newSAXParser().getXMLReader();
 			xr.setContentHandler(handler);
-			// Parse the xml-data from our URL.
-			HttpURLConnection urlConnection = (HttpURLConnection) new URL(urlString).openConnection();
-			BufferedInputStream ios = new BufferedInputStream(urlConnection.getInputStream(), 8);
-			xr.parse(new InputSource(ios));
-			ios.close();
-			urlConnection.disconnect();
+			
+			inputStream = Utilities.openStream(urlString);
+			// Parse the xml-data from InputStream.
+			xr.parse(new InputSource(inputStream));
 		} catch (Exception e) {
 			Log.e(TAG, "bad feed parsing", e);
+		} finally {
+			try {
+				inputStream.close();
+			} catch (Exception e) {
+				Log.e(TAG, "can't close inputstream", e);
+			}
 		}
 		// Parsing has finished.
 		// Our handler now provides the parsed data to us.

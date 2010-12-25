@@ -8,16 +8,16 @@
 	<TextView android:id="@+id/date"
 		android:layout_width="70dip"
 		android:layout_height="wrap_content"
-		android:textColor="#000000" />
+		android:textColor="@android:color/black" />
 		
 	<TextView android:id="@+id/school"
 		android:layout_width="170dip"
 		android:layout_height="wrap_content"
-		android:textColor="#000000" />
+		android:textColor="@android:color/black" />
 		
 	<TextView android:id="@+id/tv"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:gravity="right"
-		android:textColor="#000000" />
+		android:textColor="@android:color/black" />
 </LinearLayout>

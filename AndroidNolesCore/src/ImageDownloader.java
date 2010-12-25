@@ -15,7 +15,8 @@
  */
 package com.itnoles.shared;
 
-import org.apache.http.HttpEntity;
+import org.apache.http.*; //HttpEntity, HttpResponse and HttpStatus
+import org.apache.http.client.methods.HttpGet;
 
 import android.graphics.*; //Bitmap and BitmapFactory
 import android.os.*; //AsyncTask and Handler
@@ -72,23 +73,31 @@ public class ImageDownloader {
 		task.execute(url);
 	}
 	
-	Bitmap downloadBitmap(String url) {
+	static Bitmap downloadBitmap(String url) {
 		// AndroidHttpClient is not allowed to be used from the main thread
 		final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
 		try {
-			final HttpEntity entity = HttpUtils.openConnection(client, url);
-			if (entity != null) {
-				InputStream inputStream = null;
-				try {
-					inputStream = entity.getContent();
-					// return BitmapFactory.decodeStream(inputStream);
-					// Bug on slow connections, fixed in future release.
-					return BitmapFactory.decodeStream(new FlushedInputStream(inputStream));
-				} finally {
-					if (inputStream != null)
-						inputStream.close();
-					entity.consumeContent();
-				}
+			final HttpGet getRequest = new HttpGet(url);
+			HttpResponse response = client.execute(getRequest);
+			final int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode != HttpStatus.SC_OK) {
+				Log.w(TAG, "Error " + statusCode + " while retrieving bitmap from " + url);
+				return null;
+			}
+			final HttpEntity entity = response.getEntity();
+			if (entity == null)
+				return null;
+			
+			InputStream inputStream = null;
+			try {
+				inputStream = entity.getContent();
+				// return BitmapFactory.decodeStream(inputStream);
+				// Bug on slow connections, fixed in future release.
+				return BitmapFactory.decodeStream(new FlushedInputStream(inputStream));
+			} finally {
+				if (inputStream != null)
+					inputStream.close();
+				entity.consumeContent();
 			}
 		} catch (Exception e) {
 			Log.w(TAG, "Error while retrieving bitmap from " + url, e);

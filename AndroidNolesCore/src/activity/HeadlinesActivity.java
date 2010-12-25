@@ -20,11 +20,11 @@ import android.view.*; // Menu, MenuItem and View
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 
-import com.itnoles.shared.*; //BackgroundTask, News, InstapaperRequest and Utilities
+import com.itnoles.shared.*; //BetterBackgroundTask, News, InstapaperRequest and Utilities
 import com.itnoles.shared.adapter.*; //SeparatedListAdapter and NewsAdapter
-import com.itnoles.shared.helper.AsyncTaskCompleteListener;
+import com.itnoles.shared.helper.BetterAsyncTaskCompleteListener;
 
-public abstract class AbstractHeadlinesActivity extends ListActivity implements AsyncTaskCompleteListener {
+public class HeadlinesActivity extends ListActivity implements BetterAsyncTaskCompleteListener<String, Void, Void> {
 	private SharedPreferences mPrefs;
 	private SeparatedListAdapter mAdapter;
 	private ProgressDialog pd;
@@ -34,6 +34,7 @@ public abstract class AbstractHeadlinesActivity extends ListActivity implements 
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.maincontent);
 		pd = Utilities.showProgressDialog(this, "Loading...");
 	}
 	
@@ -42,7 +43,8 @@ public abstract class AbstractHeadlinesActivity extends ListActivity implements 
 	{
 		super.onResume();
 		mPrefs = getSharedPreferences("settings", MODE_PRIVATE);
-		new BackgroundTask(this).execute();
+		String defaultUrl = getResources().getStringArray(R.array.listValues)[0];
+		new BetterBackgroundTask<String, Void, Void>(this).execute(mPrefs.getString("newsurl", defaultUrl));
 		registerForContextMenu(getListView());
 	}
 	
@@ -55,7 +57,7 @@ public abstract class AbstractHeadlinesActivity extends ListActivity implements 
 	}
 	
 	// Display Data to ListView
-	public void onTaskComplete()
+	public void onTaskComplete(Void result)
 	{
 		if (pd != null && pd.isShowing()) {
 			pd.dismiss();
@@ -65,23 +67,23 @@ public abstract class AbstractHeadlinesActivity extends ListActivity implements 
 	}
 	
 	// Do This stuff in Background
-	public void readData()
+	public Void readData(String ...params)
 	{
-		String defaultUrl = getResources().getStringArray(R.array.listValues)[0];
 		String defaultTitle = getResources().getStringArray(R.array.listNames)[0];
-		news = com.itnoles.shared.helper.FeedParser.parse(mPrefs.getString("newsurl", defaultUrl));
+		news = com.itnoles.shared.helper.FeedParser.parse(params[0]);
 		mAdapter = new SeparatedListAdapter(this);
 		mAdapter.addSection(mPrefs.getString("newstitle", defaultTitle), new NewsAdapter(this, news));
+		return null;
 	}
 	
 	// Show the list in the context menu
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
-		menu.setHeaderTitle("Select Options");
+		menu.setHeaderTitle(R.string.share);
 		menu.add(Menu.NONE, 0, Menu.NONE, "Send to Instapaper");
-		menu.add(Menu.NONE, 1, Menu.NONE, "Open In WebView");
-		menu.add(Menu.NONE, 2, Menu.NONE, "Send to Twitter");
+		menu.add(Menu.NONE, 1, Menu.NONE, "View on Browser");
+		menu.add(Menu.NONE, 2, Menu.NONE, "Share by other apps");
 	}
 
 	// When the users selected the item id in the context menu, it called specific item action.
@@ -93,20 +95,22 @@ public abstract class AbstractHeadlinesActivity extends ListActivity implements 
 		switch(item.getItemId()) {
 			case 0:
 				// Launch the instapaper request to post data
-				InstapaperRequest request = new InstapaperRequest(mPrefs);
-				request.sendData(this, "https://www.instapaper.com/api/add?url=" + newsList.getLink());
+				InstapaperRequest request = new InstapaperRequest(this, mPrefs);
+				request.sendData("https://www.instapaper.com/api/add?url=" + newsList.getLink());
 				return true;
 			case 1:
 				// Launch Activity to view page load in webview
-				final Intent displayWebView = new Intent();
-				displayWebView.setClass(this, WebViewActivity.class);
+				final Intent displayWebView = new Intent(this, WebViewActivity.class);
 				displayWebView.putExtra("url", newsList.getLink());
 				startActivity(displayWebView);
 				return true;
+			case 2:
+				final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+				shareIntent.setType("text/plain");
+				shareIntent.putExtra(Intent.EXTRA_TEXT, newsList.getTitle() + "-" + newsList.getLink());
+				startActivity(Intent.createChooser(shareIntent, "Select an action"));
 			default:
-				return extraMenuInfo(item);
+				return super.onContextItemSelected(item);
 		}
 	}
-	
-	abstract public boolean extraMenuInfo(MenuItem item);
 }

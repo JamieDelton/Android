@@ -14,27 +14,17 @@
 package com.itnoles.shared;
 
 import android.app.*; // AlertDialog and ProgressDialog
-import android.content.*; //Context and DialogInterface
-import android.net.*; // ConnectivityManager and NetworkInfo
+import android.content.Context;
+import android.os.Build;
+
+import java.io.*; //InputStream and IOException
+import java.net.*; //URL and URLConnection
 
 /**
  * Helper class
  * @author Jonathan Steele
  */
 public class Utilities {
-	/**
-	 * NetworkCheck
-	 * Checking to see Network is connected
-	 * @param context Activity's Context
-	 * @return true or false
-	 */
-	public static Boolean NetworkCheck(Context context)
-	{
-		ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo info = cm.getActiveNetworkInfo();
-		return (info != null) ? (info.getState() == NetworkInfo.State.CONNECTED) : false;
-	}
-	
 	/**
 	 * show a new alert dialog
 	 * @param context Activity's Context
@@ -43,40 +33,13 @@ public class Utilities {
 	 */
 	public static void showAlertDialog(Context context, String title, String message)
 	{
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-		alertDialog.setTitle(title);
-		alertDialog.setMessage(message);
-		alertDialog.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				return;
-			}
-		});
-		alertDialog.show();
-	}
-	
-	/**
-	 * show a new alert dialog
-	 * @param context Activity's Context
-	 * @param title alert dialog for title
-	 * @param message Resource ID for alert dialog message
-	 */
-	
-	public static void showAlertDialog(Context context, String title, int message)
-	{
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-		alertDialog.setTitle(title);
-		alertDialog.setMessage(message);
-		alertDialog.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				return;
-			}
-		});
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context).setTitle(title).setMessage(message)
+		.setPositiveButton(android.R.string.ok, null);
 		alertDialog.show();
 	}
 	
 	/**
 	 * show a new progress dialog
-	 * 
 	 * @param activity Get a specific Activity
 	 * @param title progress dialog for title
 	 * @param message progress dialog for message
@@ -84,5 +47,18 @@ public class Utilities {
 	public static ProgressDialog showProgressDialog(Context context, String message)
 	{
 		return ProgressDialog.show(context, "", message, true);
+	}
+	
+	/**
+	 * open a new input stream from URLConnection with User-Agent Header
+	 * @param urlString string for URL address
+	 * @return new inpit stream
+	 * @throws IOException failed or interrupted I/O operations
+	 */
+	public static InputStream openStream(String urlString) throws IOException
+	{
+		URLConnection c = new URL(urlString).openConnection();
+		c.setRequestProperty("User-Agent", "Android/" + Build.VERSION.RELEASE);
+		return c.getInputStream();
 	}
 }

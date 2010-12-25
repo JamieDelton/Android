@@ -2,22 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.itnoles.knightfootball"
 	android:versionCode="1"
-	android:versionName="1.0">
+	android:versionName="1.1">
 	<application android:label="@string/app_name" android:icon="@drawable/icon" android:theme="@style/CustomTheme">
-		<activity android:name="KnightFootball"
-			android:label="@string/app_name">
+		<activity android:name="KnightFootball" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-				<data android:scheme="knightsfb" android:host="twitter"></data>
-				<data android:scheme="knightsfb" android:host="statusnet"></data>
 			</intent-filter>
 		</activity>
-		<activity android:name="KnightHeadlinesActivity" />
+		<activity android:name="com.itnoles.shared.activity.HeadlinesActivity" />
 		<activity android:name="KnightScheduleActivity" />
 		<activity android:name="LinkActivity" />
 		<activity android:name="KnightStaffActivity" />
-		<activity android:name="KnightSettingsActivity" />
+		<activity android:name="com.itnoles.shared.activity.SettingsActivity" />
 		<activity android:name="com.itnoles.shared.activity.WebViewActivity"
 			android:theme="@style/Theme.NoBackground"
 		/>
@@ -25,4 +22,6 @@
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-sdk android:minSdkVersion="8" />
+	<support-screens android:smallScreens="false" />
 </manifest>

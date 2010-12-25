@@ -13,6 +13,8 @@
 // limitations under the License.
 package com.itnoles.shared.activity;
 
+import com.itnoles.shared.R;
+
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.widget.SimpleAdapter;
@@ -21,12 +23,12 @@ import android.util.Log;
 import java.util.*; // List and ArrayList
 import org.json.*; // JSONArray and JSONObject
 
-import com.itnoles.shared.helper.*; // AsyncTaskCompleteListener and JSONHelper
+import com.itnoles.shared.BetterBackgroundTask;
+import com.itnoles.shared.helper.*; // BetterAsyncTaskCompleteListener and JSONHelper
 
-public abstract class AbstractStaffActivity extends ListActivity implements AsyncTaskCompleteListener
+public abstract class AbstractStaffActivity extends ListActivity implements BetterAsyncTaskCompleteListener<Void, Void, JSONArray>
 {
 	private static final String TAG = "AbstractStaffActivity";
-	private JSONArray json;
 	private String url;
 	
 	public AbstractStaffActivity(String url)
@@ -38,17 +40,18 @@ public abstract class AbstractStaffActivity extends ListActivity implements Asyn
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		new com.itnoles.shared.BackgroundTask(this).execute();
+		setContentView(R.layout.maincontent);
+		new BetterBackgroundTask<Void, Void, JSONArray>(this).execute();
 	}
 	
 	// Display Data to ListView
-	public void onTaskComplete()
+	public void onTaskComplete(JSONArray json)
 	{
 		if (json == null)
 			return;
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 		try {
-			for (int i=0; i < json.length(); i++) {
+			for (int i = 0; i < json.length(); i++) {
 				JSONObject rec = json.getJSONObject(i);
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("name", rec.getString("name"));
@@ -63,8 +66,8 @@ public abstract class AbstractStaffActivity extends ListActivity implements Asyn
 	}
 	
 	// Do This stuff in Background
-	public void readData()
+	public JSONArray readData(Void...params)
 	{
-		json = JSONHelper.getJSONArray(url);
+		return JSONHelper.getJSONArray(url);
 	}
 }

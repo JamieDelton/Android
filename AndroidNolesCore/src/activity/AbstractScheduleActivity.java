@@ -18,19 +18,19 @@ import com.itnoles.shared.R;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.view.*; // Menu and MenuItem
 import android.util.Log;
 
 import java.util.*; //List and ArrayList
 import org.json.*; //JSONArray and JSONObject
 
-import com.itnoles.shared.helper.*; // AsyncTaskCompleteListener and JSONHelper
+import com.itnoles.shared.BetterBackgroundTask;
+import com.itnoles.shared.adapter.ColorAdapter;
+import com.itnoles.shared.helper.*; // BetterAsyncTaskCompleteListener and JSONHelper
 
-public abstract class AbstractScheduleActivity extends ListActivity implements AsyncTaskCompleteListener
+public abstract class AbstractScheduleActivity extends ListActivity implements BetterAsyncTaskCompleteListener<Void, Void, JSONArray>
 {
 	private static final String TAG = "ScheduleActivity";
-	private JSONArray json;
 	private String url;
 
 	public AbstractScheduleActivity(String url)
@@ -43,20 +43,30 @@ public abstract class AbstractScheduleActivity extends ListActivity implements A
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_main);
-		final Button stadiumButton = (Button)this.findViewById(R.id.stadiumButton);
-		if (stadiumButton != null) {
-			stadiumButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					// Perform action on click
-					startActivity(new Intent(AbstractScheduleActivity.this, StadiumActivity.class));
-				}
-			});
+		new BetterBackgroundTask<Void, Void, JSONArray>(this).execute();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		menu.add(Menu.NONE, 0, Menu.NONE, R.string.Stadium).setIcon(R.drawable.map);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case 0:
+				Intent i = new Intent(this, StadiumActivity.class);
+				startActivity(i);
+				return true;
+			default:
+				return true;
 		}
-		new com.itnoles.shared.BackgroundTask(this).execute();
 	}
 	
 	// Display Data to ListView
-	public void onTaskComplete()
+	public void onTaskComplete(JSONArray json)
 	{
 		if (json == null)
 			return;
@@ -70,15 +80,15 @@ public abstract class AbstractScheduleActivity extends ListActivity implements A
 				map.put("tv", rec.getString("tv"));
 				entries.add(map);
 			}
-			setListAdapter(new com.itnoles.shared.adapter.ColorAdapter(this, entries));
+			setListAdapter(new ColorAdapter(this, entries));
 		} catch (JSONException e) {
 			Log.e(TAG, "bad json parsing", e);
 		}
 	}
 
 	// Do This stuff in Background
-	public void readData()
+	public JSONArray readData(Void... params)
 	{
-		json = JSONHelper.getJSONArray(url);
+		return JSONHelper.getJSONArray(url);
 	}
 }

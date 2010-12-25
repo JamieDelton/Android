@@ -7,11 +7,6 @@
 		android:dialogTitle="@string/listPref_dialogTitle"
 		android:entries="@array/listNames"
 		android:entryValues="@array/listValues" />
-	<CheckBoxPreference
-		android:title="@string/Twitter_enabled"
-		android:defaultValue="false"
-		android:summary="@string/Twitter_enabled_summary"
-		android:key="twitter_enabled" />
 	<PreferenceScreen
 		android:key="instapaperPrefScreen"
 		android:title="Instapaper">
@@ -21,17 +16,17 @@
 			android:summary="@string/Instapaper_enabled_summary"
 			android:key="instapaper_enabled" />
 		<EditTextPreference
-			android:title="@string/Instapaper_username_title"
+			android:title="@string/username"
 			android:summary="@string/Instapaper_username_summary"
 			android:key="instapaper_username"
-			android:dialogTitle="@string/Instapaper_username_title"
+			android:dialogTitle="@string/username"
 			android:singleLine="true"
 			android:dependency="instapaper_enabled" />
 		<EditTextPreference
-			android:title="@string/Instapaper_password_title"
+			android:title="@string/password"
 			android:summary="@string/Instapaper_password_summary"
 			android:key="instapaper_password"
-			android:dialogTitle="@string/Instapaper_password_title"
+			android:dialogTitle="@string/password"
 			android:singleLine="true"
 			android:inputType="textPassword"
 			android:password="true"

@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Noles Football</string>
-	<string name="listPref_title">Headlines</string>
-	<string name="listPref_summary">change the news source</string>
-	<string name="listPref_dialogTitle">News Source</string>
 	<string name="InternetNotFound">Noles Football cannot retrieve headlines data because it is not connected to the Internet.</string>
-	<string name="Stadium">Stadiums Seating Chart</string>
 </resources>

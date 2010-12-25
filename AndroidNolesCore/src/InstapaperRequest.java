@@ -18,11 +18,11 @@ import org.apache.http.auth.*;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.*; //DefaultHttpClient and BasicCredentialsProvider
 
+import android.app.ProgressDialog;
 import android.content.*; //SharedPreference and Context
-import android.os.AsyncTask;
 import android.util.Log;
 
-import com.itnoles.shared.helper.SimpleCrypto;
+import com.itnoles.shared.helper.*; //SimpleCrypto and BetterAsyncTaskCompleteListener
 
 /**
  * InstapaperRequest
@@ -30,18 +30,20 @@ import com.itnoles.shared.helper.SimpleCrypto;
  * @author Jonathan Steele
  */
 
-public class InstapaperRequest
+public class InstapaperRequest implements BetterAsyncTaskCompleteListener<String, Void, Integer>
 {
 	private static final String TAG = "InstapaperRequest";
 	private SharedPreferences prefs;
-
+	private Context context;
+	
 	public static final String INSTAPAPER_ENABLED = "instapaper_enabled";
 	public static final String INSTAPAPER_USERNAME = "instapaper_username";
 	public static final String INSTAPAPER_PASSWORD = "instapaper_password";
-	
+
 	// Constructor
-	public InstapaperRequest(SharedPreferences mSP)
+	public InstapaperRequest(Context context, SharedPreferences mSP)
 	{
+		this.context = context;
 		this.prefs = mSP;
 	}
 	
@@ -82,59 +84,58 @@ public class InstapaperRequest
 	}
 	
 	// Send Data To Instapaper
-	public void sendData(Context context, String url)
+	public void sendData(String url)
 	{
 		// If it is not ready, don't try to open the connection.
 		Boolean isInstapaperReady = prefs.getBoolean(INSTAPAPER_ENABLED, false) && getUserName().length() > 0 && getPassword().length() > 0;
 		if (!isInstapaperReady)
 			return;
 		
-		HTTPResponseTask task = new HTTPResponseTask(context);
-		task.execute(url);
+		new BetterBackgroundTask<String, Void, Integer>(this).execute(url);
 	}
-
-	class HTTPResponseTask extends AsyncTask<String, Void, Integer> {
-		private Context context;
+	
+	public void onTaskComplete(Integer statusCode)
+	{
+		final String message;
+		switch(statusCode) {
+			case HttpStatus.SC_CREATED: message = "This URL has been successfully added to this Instapaper account."; break;
+			case HttpStatus.SC_BAD_REQUEST: message = "Bad request."; break;
+			case HttpStatus.SC_FORBIDDEN: message = "Invalid username or password."; break;
+			case HttpStatus.SC_INTERNAL_SERVER_ERROR: message = "The service encountered an error. Please try again later."; break;
+			default: message = "OK"; break;
+		}
+		Utilities.showAlertDialog(context, "Instapaper Results", message + " HTTP Status Code: (" + statusCode + ")");
+	}
+	
+	// Do This stuff in Background
+	public Integer readData(String ...params)
+	{
+		final DefaultHttpClient client = createCredentials();
+		if (client == null)
+			return null;
 		
-		public HTTPResponseTask(Context context)
-		{
-			this.context = context;
+		String url = params[0];
+		
+		ProgressDialog pd = null;
+		if (url.equals("https://www.instapaper.com/api/authenticate"))
+			pd = Utilities.showProgressDialog(context, "Signing in...");
+		
+		// Send the HTTP Get Request
+		final HttpGet getRequest = new HttpGet(url);
+		int statuscode = 0;
+		try {
+			HttpResponse httpResponse = client.execute(getRequest);
+			statuscode = httpResponse.getStatusLine().getStatusCode();
+		} catch (Exception e) {
+			getRequest.abort();
+			Log.e(TAG, "bad httpResponse for get Data", e);
+		} finally {
+			client.getConnectionManager().shutdown();
 		}
 		
-		@Override
-		protected Integer doInBackground(String... params) {
-			final DefaultHttpClient client = createCredentials();
-			if (client == null)
-				return null;
-			
-			final HttpGet getRequest = new HttpGet(params[0]);
-			int statuscode = 0;
-			try {
-				HttpResponse httpResponse = client.execute(getRequest);
-				statuscode = httpResponse.getStatusLine().getStatusCode();
-			} catch (Exception e) {
-				getRequest.abort();
-				Log.e(TAG, "bad httpResponse for get Data", e);
-			} finally {
-				client.getConnectionManager().shutdown();
-			}
-			return new Integer(statuscode);
-		}
-		
-		@Override
-		protected void onPostExecute(Integer statusCode) {
-			final String message;
-			switch(statusCode) {
-				case HttpStatus.SC_CREATED: message = "This URL has been successfully added to this Instapaper account."; break;
-				case HttpStatus.SC_BAD_REQUEST: message = "Bad request."; break;
-				case HttpStatus.SC_FORBIDDEN: message = "Invalid username or password."; break;
-				case HttpStatus.SC_INTERNAL_SERVER_ERROR: message = "The service encountered an error. Please try again later."; break;
-				case HttpStatus.SC_OK: message = "OK"; break;
-				default: message = null; break;
-			}
-
-			if (message != null)
-				Utilities.showAlertDialog(context, "Instapaper Results", message + " HTTP Status Code: (" + statusCode + ")");
-		}
+		// Dismiss progress bar if it is showing
+		if (pd != null && pd.isShowing())
+			pd.dismiss();
+		return new Integer(statuscode);
 	}
 }

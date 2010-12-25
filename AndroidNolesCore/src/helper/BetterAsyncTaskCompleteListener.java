@@ -13,8 +13,8 @@
 // limitations under the License.
 package com.itnoles.shared.helper;
 
-public interface AsyncTaskCompleteListener
+public interface BetterAsyncTaskCompleteListener<T1, T2, T3>
 {
-	public void onTaskComplete();
-	public void readData();
+	public T3 readData(T1... params);
+	public void onTaskComplete(T3 result);
 }

@@ -16,10 +16,11 @@ package com.itnoles.nolesfootball;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Bundle;
+import android.os.*; // Bundle and StrictMode
 import android.widget.TabHost;
 
-import com.itnoles.shared.Utilities;
+import com.itnoles.shared.Constants;
+import com.itnoles.shared.activity.*; // HeadlinesActivity and SettingsActivity
 
 public class NolesFootball extends TabActivity
 {
@@ -29,18 +30,16 @@ public class NolesFootball extends TabActivity
 	{
 		super.onCreate(savedInstanceState);
 		
-		if (!Utilities.NetworkCheck(this)) {
-			Utilities.showAlertDialog(this,"Internet Not Found", R.string.InternetNotFound);
-			return;
-		}
-		
-		Resources res = getResources(); // Resource object to get Drawables
+		if (Constants.ISORLATER_GINGERBREAD)
+			StrictMode.enableDefaults();
+			
+		Resources res = getResources(); // get Resources Class
 		final TabHost tabHost = getTabHost();  // The activity TabHost
 		TabHost.TabSpec spec;  // Resusable TabSpec for each tab
 		Intent intent;  // Reusable Intent for each tab
 
 		// Create an Intent to launch an Activity for the tab (to be reused)
-		intent = new Intent().setClass(this, NolesHeadlinesActivity.class);
+		intent = new Intent().setClass(this, HeadlinesActivity.class);
 		
 		// Initialize a TabSpec for each tab and add it to the TabHost
 		spec = tabHost.newTabSpec("headlines").setIndicator("Headlines",
@@ -67,7 +66,7 @@ public class NolesFootball extends TabActivity
 		              .setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent().setClass(this, NolesSettingsActivity.class);
+		intent = new Intent().setClass(this, SettingsActivity.class);
 		spec = tabHost.newTabSpec("setting").setIndicator("Settings",
 		                  res.getDrawable(R.drawable.gear2))
 		              .setContent(intent);

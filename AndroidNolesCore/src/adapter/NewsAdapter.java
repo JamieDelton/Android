@@ -48,16 +48,14 @@ public class NewsAdapter extends ArrayAdapter<News> {
 		News news = items.get(position);
 		if (news != null) {
 			ImageView thumbnail = (ImageView) v.findViewById(R.id.icon);
-			if (thumbnail != null) {
-				ImageDownloader downloader = new ImageDownloader();
-				downloader.download(news.getImageURL(), thumbnail);
-			}
+			ImageDownloader downloader = new ImageDownloader();
+			downloader.download(news.getImageURL(), thumbnail);
+
 			TextView title = (TextView) v.findViewById(R.id.text1);
-			if (title != null)
-				title.setText(news.getTitle());
+			title.setText(news.getTitle());
+			
 			TextView subtitle = (TextView) v.findViewById(R.id.text2);
-			if (subtitle != null)
-				subtitle.setText(news.getPubdate());
+			subtitle.setText(news.getPubdate());
 		}
 		return v;
 	}
