@@ -21,6 +21,7 @@ import org.apache.http.impl.client.*; //DefaultHttpClient and BasicCredentialsPr
 import android.app.ProgressDialog;
 import android.content.*; //SharedPreference and Context
 import android.util.Log;
+import android.widget.Toast;
 
 import com.itnoles.shared.helper.*; //SimpleCrypto and BetterAsyncTaskCompleteListener
 
@@ -104,7 +105,7 @@ public class InstapaperRequest implements BetterAsyncTaskCompleteListener<String
 			case HttpStatus.SC_INTERNAL_SERVER_ERROR: message = "The service encountered an error. Please try again later."; break;
 			default: message = "OK"; break;
 		}
-		Utilities.showAlertDialog(context, "Instapaper Results", message + " HTTP Status Code: (" + statusCode + ")");
+		Utilities.showToast(context, message, Toast.LENGTH_LONG);
 	}
 	
 	// Do This stuff in Background

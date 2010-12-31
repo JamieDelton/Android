@@ -1,4 +1,3 @@
 <resources>
 	<string name="app_name">Noles Football</string>
-	<string name="InternetNotFound">Noles Football cannot retrieve headlines data because it is not connected to the Internet.</string>
 </resources>

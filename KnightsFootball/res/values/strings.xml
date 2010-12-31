@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Knights Football</string>
-	<string name="InternetNotFound">Knights Football cannot retrieve headlines data because it is not connected to the Internet.</string>
 </resources>

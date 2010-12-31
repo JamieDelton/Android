@@ -18,23 +18,21 @@ import android.content.*; // Intent and SharedPreferences
 import android.os.Bundle;
 import android.view.*; // Menu, MenuItem and View
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
+import android.widget.*; // AdapterView and TextView
 
 import com.itnoles.shared.*; //BetterBackgroundTask, News, InstapaperRequest and Utilities
-import com.itnoles.shared.adapter.*; //SeparatedListAdapter and NewsAdapter
+import com.itnoles.shared.adapter.NewsAdapter;
 import com.itnoles.shared.helper.BetterAsyncTaskCompleteListener;
 
-public class HeadlinesActivity extends ListActivity implements BetterAsyncTaskCompleteListener<String, Void, Void> {
+public class HeadlinesActivity extends ListActivity implements BetterAsyncTaskCompleteListener<String, Void, NewsAdapter> {
 	private SharedPreferences mPrefs;
-	private SeparatedListAdapter mAdapter;
 	private ProgressDialog pd;
-	private java.util.List<News> news;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.maincontent);
+		setContentView(R.layout.headlines);
 		pd = Utilities.showProgressDialog(this, "Loading...");
 	}
 	
@@ -43,8 +41,13 @@ public class HeadlinesActivity extends ListActivity implements BetterAsyncTaskCo
 	{
 		super.onResume();
 		mPrefs = getSharedPreferences("settings", MODE_PRIVATE);
+		
+		String defaultTitle = getResources().getStringArray(R.array.listNames)[0];
+		final TextView headerText = (TextView) findViewById(R.id.list_header_title);
+		headerText.setText(mPrefs.getString("newstitle", defaultTitle));
+		
 		String defaultUrl = getResources().getStringArray(R.array.listValues)[0];
-		new BetterBackgroundTask<String, Void, Void>(this).execute(mPrefs.getString("newsurl", defaultUrl));
+		new BetterBackgroundTask<String, Void, NewsAdapter>(this).execute(mPrefs.getString("newsurl", defaultUrl));
 		registerForContextMenu(getListView());
 	}
 	
@@ -52,28 +55,26 @@ public class HeadlinesActivity extends ListActivity implements BetterAsyncTaskCo
 	protected void onPause()
 	{
 		super.onPause();
+		
 		// clear the list when this activity is nolonger visible.
-		news.clear();
+		((NewsAdapter)getListAdapter()).clear();
 	}
 	
 	// Display Data to ListView
-	public void onTaskComplete(Void result)
+	public void onTaskComplete(NewsAdapter adapter)
 	{
 		if (pd != null && pd.isShowing()) {
 			pd.dismiss();
 			pd = null;
 		}
-		setListAdapter(mAdapter);
+		setListAdapter(adapter);
 	}
 	
 	// Do This stuff in Background
-	public Void readData(String ...params)
+	public NewsAdapter readData(String ...params)
 	{
-		String defaultTitle = getResources().getStringArray(R.array.listNames)[0];
-		news = com.itnoles.shared.helper.FeedParser.parse(params[0]);
-		mAdapter = new SeparatedListAdapter(this);
-		mAdapter.addSection(mPrefs.getString("newstitle", defaultTitle), new NewsAdapter(this, news));
-		return null;
+		java.util.List<News> news = com.itnoles.shared.helper.FeedParser.parse(params[0]);
+		return new NewsAdapter(this, news);
 	}
 	
 	// Show the list in the context menu
@@ -82,7 +83,7 @@ public class HeadlinesActivity extends ListActivity implements BetterAsyncTaskCo
 	{
 		menu.setHeaderTitle(R.string.share);
 		menu.add(Menu.NONE, 0, Menu.NONE, "Send to Instapaper");
-		menu.add(Menu.NONE, 1, Menu.NONE, "View on Browser");
+		menu.add(Menu.NONE, 1, Menu.NONE, "View on WebView");
 		menu.add(Menu.NONE, 2, Menu.NONE, "Share by other apps");
 	}
 
@@ -107,7 +108,7 @@ public class HeadlinesActivity extends ListActivity implements BetterAsyncTaskCo
 			case 2:
 				final Intent shareIntent = new Intent(Intent.ACTION_SEND);
 				shareIntent.setType("text/plain");
-				shareIntent.putExtra(Intent.EXTRA_TEXT, newsList.getTitle() + "-" + newsList.getLink());
+				shareIntent.putExtra(Intent.EXTRA_TEXT, newsList.getLink());
 				startActivity(Intent.createChooser(shareIntent, "Select an action"));
 			default:
 				return super.onContextItemSelected(item);

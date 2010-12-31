@@ -13,9 +13,10 @@
 // limitations under the License.
 package com.itnoles.shared;
 
-import android.app.*; // AlertDialog and ProgressDialog
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Build;
+import android.widget.Toast;
 
 import java.io.*; //InputStream and IOException
 import java.net.*; //URL and URLConnection
@@ -26,23 +27,20 @@ import java.net.*; //URL and URLConnection
  */
 public class Utilities {
 	/**
-	 * show a new alert dialog
+	 * show a toast dialog
 	 * @param context Activity's Context
-	 * @param title alert dialog for title
-	 * @param message alert dialog for message
+	 * @param text message for the dialog to show
+	 * @param duration Long or Short
 	 */
-	public static void showAlertDialog(Context context, String title, String message)
-	{
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(context).setTitle(title).setMessage(message)
-		.setPositiveButton(android.R.string.ok, null);
-		alertDialog.show();
+	public static void showToast(Context context, String text, int duration) {
+		Toast.makeText(context, text, duration).show();
 	}
 	
 	/**
-	 * show a new progress dialog
-	 * @param activity Get a specific Activity
-	 * @param title progress dialog for title
+	 * show a progress dialog
+	 * @param context Activity's Context
 	 * @param message progress dialog for message
+	 * @return a new progress dialog
 	 */
 	public static ProgressDialog showProgressDialog(Context context, String message)
 	{

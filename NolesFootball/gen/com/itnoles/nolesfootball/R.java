@@ -42,12 +42,13 @@ public final class R {
         public static final int tv=0x7f090006;
     }
     public static final class layout {
-        public static final int icon_detail_list_item=0x7f030000;
-        public static final int list_header=0x7f030001;
-        public static final int maincontent=0x7f030002;
-        public static final int schedule=0x7f030003;
-        public static final int schedule_main=0x7f030004;
-        public static final int textviewempty=0x7f030005;
+        public static final int headlines=0x7f030000;
+        public static final int icon_detail_list_item=0x7f030001;
+        public static final int list_header=0x7f030002;
+        public static final int maincontent=0x7f030003;
+        public static final int schedule=0x7f030004;
+        public static final int schedule_main=0x7f030005;
+        public static final int textviewempty=0x7f030006;
     }
     public static final class string {
         public static final int Instapaper=0x7f050000;
@@ -56,7 +57,6 @@ public final class R {
         public static final int Instapaper_password_summary=0x7f050007;
         public static final int Instapaper_result=0x7f050001;
         public static final int Instapaper_username_summary=0x7f050005;
-        public static final int InternetNotFound=0x7f05000f;
         public static final int Stadium=0x7f05000b;
         public static final int app_name=0x7f05000e;
         public static final int listPref_dialogTitle=0x7f05000a;

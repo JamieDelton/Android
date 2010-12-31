@@ -1,42 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent"
 	android:orientation="vertical">
-	
-	<!-- Header -->
-	<LinearLayout android:id="@+id/header"
-		android:background="@color/schedule_header_background"
-		android:layout_height="wrap_content"
+	<LinearLayout android:id="@+id/header" android:background="@color/schedule_header_background" android:layout_height="wrap_content"
 		android:layout_width="match_parent">
-		<TextView android:id="@+id/item1"
-			android:layout_height="match_parent"
-			android:layout_width="wrap_content"
-			android:text="Date"
-			android:textColor="@color/schedule_text_color"
-			android:width="70dip" />
-		<TextView android:id="@+id/item2"
-			android:layout_height="match_parent"
-			android:layout_width="wrap_content"
-			android:text="Opponent / Event"
-			android:textColor="@color/schedule_text_color"
-			android:width="170dip" />
-		<TextView android:id="@+id/item3"
-			android:layout_height="match_parent"
-			android:layout_width="wrap_content"
-			android:text="TV/Result"
-			android:textColor="@color/schedule_text_color"
-			android:gravity="right" />
+		<TextView android:id="@+id/item1" android:layout_height="match_parent" android:layout_width="wrap_content" android:text="Date"
+			android:textColor="@color/schedule_text_color" android:width="70dip" />
+		<TextView android:id="@+id/item2" android:layout_height="match_parent" android:layout_width="wrap_content" android:text="Opponent / Event"
+			android:textColor="@color/schedule_text_color" android:width="170dip" />
+		<TextView android:id="@+id/item3" android:layout_height="match_parent" android:layout_width="wrap_content" android:text="TV/Result"
+			android:textColor="@color/schedule_text_color" android:gravity="right" />
 	</LinearLayout>
-
-	<!-- List Divider -->
-	<View android:layout_width="match_parent"
-		android:layout_height="1dip"
-		android:background="?android:attr/listDivider" />
-	
-	<!-- ListView (grid_items) -->
-	<ListView android:id="@android:id/list"
-		android:layout_height="match_parent"
-		android:layout_width="match_parent" />
-		
+	<View android:layout_width="match_parent" android:layout_height="1dip" android:background="?android:attr/listDivider" />
+	<ListView android:id="@android:id/list" android:layout_height="match_parent" android:layout_width="match_parent" />
 	<include layout="@layout/textviewempty" />
 </LinearLayout>

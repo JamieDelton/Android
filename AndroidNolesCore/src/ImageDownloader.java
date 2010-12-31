@@ -19,7 +19,7 @@ import org.apache.http.*; //HttpEntity, HttpResponse and HttpStatus
 import org.apache.http.client.methods.HttpGet;
 
 import android.graphics.*; //Bitmap and BitmapFactory
-import android.os.*; //AsyncTask and Handler
+import android.os.*; // AsyncTask and Handler
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import android.widget.ImageView;
@@ -49,6 +49,12 @@ public class ImageDownloader {
 	 * @param imageView The ImageView to bind the downloaded image to.
 	 */
 	public void download(String url, ImageView imageView) {
+		// State sanity: url is guaranteed to never be null in cache keys.
+		if (url == null) {
+			imageView.setImageDrawable(null);
+			return;
+		}
+		
 		resetPurgeTimer();
 		Bitmap bitmap = getBitmapFromCache(url);
 		if (bitmap == null)
@@ -62,18 +68,11 @@ public class ImageDownloader {
 	 * Kept private at the moment as its interest is not clear.
 	 */
 	private void forceDownload(String url, ImageView imageView) {
-		// State sanity: url is guaranteed to never be null in cache keys.
-		if (url == null) {
-			imageView.setImageDrawable(null);
-			return;
-		}
-		
 		imageView.setMinimumHeight(156);
-		BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
-		task.execute(url);
+		new BitmapDownloaderTask(imageView).execute(url);
 	}
 	
-	static Bitmap downloadBitmap(String url) {
+	Bitmap downloadBitmap(String url) {
 		// AndroidHttpClient is not allowed to be used from the main thread
 		final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
 		try {
@@ -223,9 +222,6 @@ public class ImageDownloader {
 	 * @return The cached bitmap or null if it was not found.
 	 */
 	private Bitmap getBitmapFromCache(String url) {
-		if (url == null)
-			return null;
-			
 		// First try the hard reference cache
 		synchronized (sHardBitmapCache) {
 			final Bitmap bitmap = sHardBitmapCache.get(url);

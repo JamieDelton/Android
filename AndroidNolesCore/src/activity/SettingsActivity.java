@@ -18,7 +18,6 @@ import com.itnoles.shared.R;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-//import android.net.Uri;
 import android.preference.*; // ListPreference, CheckBoxPreference, EditTextPreference, PreferenceActivity and Preference
 import android.view.Gravity;
 import android.widget.TextView;

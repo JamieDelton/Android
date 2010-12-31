@@ -14,7 +14,7 @@
 package com.itnoles.shared.adapter;
 
 import android.content.Context;
-import android.view.*; //View and ViewGroup
+import android.view.*; // LayoutInflater, View and ViewGroup
 import android.widget.*; // ArrayAdapter, ImageView and TextView
 
 import java.util.List;
@@ -48,8 +48,8 @@ public class NewsAdapter extends ArrayAdapter<News> {
 		News news = items.get(position);
 		if (news != null) {
 			ImageView thumbnail = (ImageView) v.findViewById(R.id.icon);
-			ImageDownloader downloader = new ImageDownloader();
-			downloader.download(news.getImageURL(), thumbnail);
+			final ImageDownloader imageDownloader = new ImageDownloader();
+			imageDownloader.download(news.getImageURL(), thumbnail);
 
 			TextView title = (TextView) v.findViewById(R.id.text1);
 			title.setText(news.getTitle());
